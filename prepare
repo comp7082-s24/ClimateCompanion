@@ -1,0 +1,14 @@
+#!/bin/bash
+set -eo pipefail
+
+flutter clean
+
+flutter pub get
+
+flutter analyze --fatal-infos --fatal-warnings .
+
+flutter test test
+
+dart format --line-length=140 .
+
+dart format --output=none --set-exit-if-changed --line-length=140 .
