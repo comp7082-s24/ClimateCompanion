@@ -1,0 +1,53 @@
+name: climate_companion
+description: "The climate companion is a mobile, web, and desktop app that allows users to view the weather, get suggestions for activities, and view the weather forecast."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.3.1 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Contains utility functions and classes in the style of dart:collection to make working with collections easier.
+  collection: ^1.18.0
+
+  # Used to manage window size on desktop. Obtains the current windows size and position.
+  window_manager: ^0.3.8
+
+  # For opening external links
+  url_launcher: ^6.2.6
+
+  # Used for navigation routing
+  go_router: ^14.0.2
+
+  # Used for the weather API
+  weather: ^3.1.1
+
+  # Used for the weather icons
+  weather_icons: ^3.0.0
+
+  # For suggesting activities
+  flutter_gemini: ^2.0.3
+
+  # For database / storing data locally
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
+
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+  # to generate code
+  build_runner: ^2.4.8
+
+flutter:
+  generate: true
+  uses-material-design: true
+
+  assets:
+    - assets/images/
