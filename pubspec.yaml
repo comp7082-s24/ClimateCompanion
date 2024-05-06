@@ -10,6 +10,9 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Used for Context Provider and managing themes throughout the application
+  provider: ^6.0.1
+
   # Contains utility functions and classes in the style of dart:collection to make working with collections easier.
   collection: ^1.18.0
 
