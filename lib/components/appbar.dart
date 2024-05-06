@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 
 import "package:climate_companion/themes/theme_provider.dart";
@@ -18,7 +19,11 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         IconButton(
           icon: const Icon(Icons.person_2_rounded),
-          onPressed: () {},
+          onPressed: () {
+            // GoRouter.of(context).go("/profile");
+            context.goNamed("profile");
+
+          },
         ),
       ],
       centerTitle: false,
