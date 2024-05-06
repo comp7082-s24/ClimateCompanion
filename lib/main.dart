@@ -1,3 +1,4 @@
+import "package:climate_companion/components/appbar.dart";
 import "package:climate_companion/themes/theme_provider.dart";
 import "package:flutter/material.dart";
 import "package:provider/provider.dart";
@@ -19,6 +20,7 @@ class MainApp extends StatelessWidget {
       // To use themes make sure you're using the theme from the provider
       theme: Provider.of<ThemeProvider>(context).themeData,
       home: Scaffold(
+        appBar: const MainAppBar(),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
