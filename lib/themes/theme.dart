@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 ThemeData defaultLightMode = ThemeData(
   brightness: Brightness.light,
@@ -14,18 +14,20 @@ ThemeData defaultLightMode = ThemeData(
   ),
   cardColor: Colors.grey[50], // Cards are very light grey, near white
   textTheme: TextTheme(
-    bodyText1: const TextStyle(color: Colors.black), // Main text color is black for readability
-    bodyText2: TextStyle(color: Colors.grey[600]), // Secondary text color is a darker grey
+    bodyLarge: const TextStyle(
+        color: Colors.black,), // Main text color is black for readability
+    bodyMedium: TextStyle(
+        color: Colors.grey[600],), // Secondary text color is a darker grey
   ),
   iconTheme: IconThemeData(
     color: Colors.grey[800], // Icon color is dark grey for better visibility
   ),
   buttonTheme: ButtonThemeData(
     buttonColor: Colors.blue[300], // Button color is a soft blue
-    textTheme: ButtonTextTheme.primary, // Use the primary text theme for buttons
+    textTheme:
+        ButtonTextTheme.primary, // Use the primary text theme for buttons
   ),
 );
-
 
 ThemeData defaultDarkMode = ThemeData(
   brightness: Brightness.dark,
@@ -41,14 +43,17 @@ ThemeData defaultDarkMode = ThemeData(
   ),
   cardColor: Colors.grey[850], // Cards are a slightly lighter shade of black
   textTheme: const TextTheme(
-    bodyText1: TextStyle(color: Colors.white), // Main text color
-    bodyText2: TextStyle(color: Colors.white70), // Secondary text color (slightly opaque)
+    bodyLarge: TextStyle(color: Colors.white), // Main text color
+    bodyMedium:
+        TextStyle(color: Colors.white70), // Secondary text color (slightly
+    // opaque)
   ),
   iconTheme: const IconThemeData(
     color: Colors.white70, //
   ),
   buttonTheme: ButtonThemeData(
     buttonColor: Colors.blue[300], // Button color
-    textTheme: ButtonTextTheme.primary, // Use the primary text theme for buttons
+    textTheme:
+        ButtonTextTheme.primary, // Use the primary text theme for buttons
   ),
 );
