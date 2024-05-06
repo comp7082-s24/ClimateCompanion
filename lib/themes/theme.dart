@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 ThemeData defaultLightMode = ThemeData(
   brightness: Brightness.light,
   primarySwatch: Colors.blueGrey, // Neutral blue as the primary swatch
-  primaryColor: Colors.white, // Main color is white
+  primaryColor: Colors.white,
   primaryColorLight: Colors.grey[300], // Light grey for elevated elements
   primaryColorDark: Colors.grey[900], // Dark grey for contrasting elements
   hintColor: Colors.blue[600], // More vibrant blue for accent elements

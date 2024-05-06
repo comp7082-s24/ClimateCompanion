@@ -4,8 +4,12 @@ import "package:climate_companion/views/suggestions.dart";
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import 'package:climate_companion/mainWrapper.dart';
+import 'package:climate_companion/BottomNavScaffold.dart';
 import 'package:climate_companion/views/favourites.dart';
+
+/// This is how navigation and routes are set up.
+/// The [RoutePath] enum is used to define the paths for the application.
+/// The [AppNavigation] class is used to define the initial route and the navigators for the application.
 
 enum RoutePath {
   home(path: "/home"),
