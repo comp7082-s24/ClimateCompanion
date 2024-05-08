@@ -1,5 +1,10 @@
 import "package:flutter/material.dart";
 
+class themeColor {
+  themeColor._();
+
+}
+
 ThemeData defaultLightMode = ThemeData(
   brightness: Brightness.light,
   useMaterial3: true,
@@ -23,6 +28,7 @@ ThemeData defaultLightMode = ThemeData(
   // Cards are very light grey, near white
   textTheme: TextTheme(
     bodyLarge: const TextStyle(
+      fontSize: 32.0,
       color: Colors.black,
     ), // Main text color is black for readability
     bodyMedium: TextStyle(
@@ -65,7 +71,9 @@ ThemeData defaultDarkMode = ThemeData(
   cardColor: Colors.grey[850],
   // Cards are a slightly lighter shade of black
   textTheme: const TextTheme(
-    bodyLarge: TextStyle(color: Colors.white), // Main text color
+    bodyLarge: TextStyle(
+        fontSize: 32.0,
+        color: Colors.white), // Main text color
     bodyMedium:
         TextStyle(color: Colors.white70), // Secondary text color (slightly
     // opaque)
