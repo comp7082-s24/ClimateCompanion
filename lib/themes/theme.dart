@@ -1,9 +1,5 @@
 import "package:flutter/material.dart";
 
-class themeColor {
-  themeColor._();
-
-}
 
 ThemeData defaultLightMode = ThemeData(
   brightness: Brightness.light,
@@ -40,9 +36,9 @@ ThemeData defaultLightMode = ThemeData(
   ),
   buttonTheme: ButtonThemeData(
     buttonColor: Colors.blue[300], // Button color is a soft blue
-    textTheme:
-        ButtonTextTheme.primary, // Use the primary text theme for buttons
+    textTheme: ButtonTextTheme.primary, // Use the primary text theme for buttons
   ),
+  fontFamily: "Roboto",
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: Colors.white,
     selectedItemColor: Colors.blue[300],

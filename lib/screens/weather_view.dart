@@ -47,16 +47,18 @@ class _WeatherViewState extends State<WeatherView> {
           const SizedBox(height: 16),
           _nextDaysText(),
           const SizedBox(height: 16),
-          FutureBuilder(future: fetchNextFiveDays(), builder: (final BuildContext context, final AsyncSnapshot<List<Weather>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done) {
-              forecast = snapshot.data!;
-              print(forecast);
-              return UpcomingBox(entries: entries, context: context, forecast: forecast);
-            } else {
-              return const Center(child: CircularProgressIndicator());
-            }
-          },),
+          _buildThreeDays(),
         ],
+      ),
+    );
+  }
+
+  Text _title() {
+    return const Text(
+      "Greetings Charlie!",
+      style: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -68,7 +70,7 @@ class _WeatherViewState extends State<WeatherView> {
         if (snapshot.connectionState == ConnectionState.done) {
           w = snapshot.data!;
           return MainWeatherContainer(
-              degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} Degrees",
+              degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} °C",
               weatherIcon: weatherIcon,
               weather: w.weatherDescription.toString(),
               link: "http://openweathermap.org/img/w/${w.weatherIcon}.png");
@@ -89,13 +91,17 @@ class _WeatherViewState extends State<WeatherView> {
     );
   }
 
-  Text _title() {
-    return const Text(
-      "Greetings Charlie!",
-      style: TextStyle(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-      ),
+  FutureBuilder<List<Weather>> _buildThreeDays() {
+    return FutureBuilder(
+      future: fetchNextFiveDays(),
+      builder: (final BuildContext context, final AsyncSnapshot<List<Weather>> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          forecast = snapshot.data!;
+          return UpcomingBox(context: context, forecast: forecast);
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
     );
   }
 }
@@ -103,12 +109,10 @@ class _WeatherViewState extends State<WeatherView> {
 class UpcomingBox extends StatelessWidget {
   const UpcomingBox({
     super.key,
-    required this.entries,
     required this.context,
     required this.forecast,
   });
 
-  final List<String> entries;
   final BuildContext context;
   final List<Weather> forecast;
 
@@ -119,12 +123,12 @@ class UpcomingBox extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.all(8),
-        itemCount: entries.length,
+        itemCount: 3,
         itemBuilder: (final BuildContext context, final int index) {
           return Builder(
-              // Created a builder to fetch the latest theme
-              builder: (final context) {
-            return Container(
+            // Created a builder to fetch the latest theme
+            builder: (final context) {
+              return Container(
                 decoration: BoxDecoration(
                   color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(16),
@@ -141,28 +145,23 @@ class UpcomingBox extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    const Text(
-                      "Day",
-                      style: TextStyle(
+                    Text(
+                      "${forecast[index].tempFeelsLike!.celsius!.toStringAsFixed(1)}°C",
+                      style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const Icon(
-                      Icons.cloud,
-                      size: 24,
-                      color: Colors.blue,
-                    ),
-                    Text(
-                      entries[index],
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Image.network(
+                      "http://openweathermap.org/img/w/${forecast[index].weatherIcon}.png",
+                      fit: BoxFit.cover,
+                      height: 32,
                     ),
                   ],
-                ));
-          });
+                ),
+              );
+            },
+          );
         },
         separatorBuilder: (final BuildContext context, final int index) {
           return SizedBox(width: MediaQuery.of(context).size.width / 18);
@@ -217,11 +216,6 @@ class MainWeatherContainer extends StatelessWidget {
             fit: BoxFit.cover,
             height: 64,
           ),
-          // Icon(
-          //   weatherIcon.icon,
-          //   size: 64,
-          //   color: Colors.blue,
-          // ),
           Text(
             weather,
             style: const TextStyle(
@@ -233,6 +227,9 @@ class MainWeatherContainer extends StatelessWidget {
             onPressed: () {
               context.goNamed("aiSuggest");
             },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).primaryColor,
+            ),
             child: const Text("CC, What are my options?"),
           ),
         ],
