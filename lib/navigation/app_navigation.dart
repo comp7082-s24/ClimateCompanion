@@ -1,11 +1,10 @@
 import "package:climate_companion/views/home.dart";
 import "package:climate_companion/views/profile.dart";
 import "package:climate_companion/views/suggestions.dart";
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-
-import 'package:climate_companion/BottomNavScaffold.dart';
-import 'package:climate_companion/views/favourites.dart';
+import "package:flutter/material.dart";
+import "package:go_router/go_router.dart";
+import "package:climate_companion/bottom_nav_scaffold.dart";
+import "package:climate_companion/views/favourites.dart";
 
 /// This is how navigation and routes are set up.
 /// The [RoutePath] enum is used to define the paths for the application.
@@ -29,17 +28,19 @@ class AppNavigation {
 
   // Navigators for the application
   static final _navigator = GlobalKey<NavigatorState>();
-  static final _homeNavigator = GlobalKey<NavigatorState>(debugLabel: 'HomeNavigator');
+  static final _homeNavigator = GlobalKey<NavigatorState>(debugLabel: "HomeNavigator");
 
   // Go Router Config
-  static final GoRouter router =
-      GoRouter(initialLocation: initialRoute, navigatorKey: _navigator, routes: [
-    GoRoute(
-      path: RoutePath.profile.path,
-      name: RoutePath.profile.name,
-      builder: (final context, final state) => const Profile(),
-    ),
-    StatefulShellRoute.indexedStack(
+  static final GoRouter router = GoRouter(
+    initialLocation: initialRoute,
+    navigatorKey: _navigator,
+    routes: [
+      GoRoute(
+        path: RoutePath.profile.path,
+        name: RoutePath.profile.name,
+        builder: (final context, final state) => const Profile(),
+      ),
+      StatefulShellRoute.indexedStack(
         builder: (final BuildContext context, final GoRouterState state, final navigationShell) {
           return MainWrapper(navigationShell: navigationShell);
         },
@@ -68,13 +69,17 @@ class AppNavigation {
           ),
 
           /// For the Second Navigation Tab Called Favourites
-          StatefulShellBranch(routes: [
-            GoRoute(
-              path: RoutePath.favourites.path,
-              name: RoutePath.favourites.name,
-              builder: (final BuildContext context, final GoRouterState state) => Favourites(),
-            ),
-          ]),
-        ]),
-  ]);
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: RoutePath.favourites.path,
+                name: RoutePath.favourites.name,
+                builder: (final BuildContext context, final GoRouterState state) => const Favourites(),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ],
+  );
 }

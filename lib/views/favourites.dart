@@ -1,6 +1,5 @@
-import 'package:flutter/material.dart';
-
-import "../components/appbar.dart";
+import "package:flutter/material.dart";
+import "package:climate_companion/components/appbar.dart";
 
 class Favourites extends StatefulWidget {
   const Favourites({super.key});
@@ -15,9 +14,7 @@ class _FavouritesState extends State<Favourites> {
     return const Scaffold(
       appBar: MainAppBar(),
       body: Center(
-        child: Text(
-            "Favourites"
-        ),
+        child: Text("Favourites"),
       ),
     );
   }

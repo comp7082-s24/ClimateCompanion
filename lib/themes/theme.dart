@@ -1,8 +1,7 @@
 import "package:flutter/material.dart";
 
-class themeColor {
-  themeColor._();
-
+class ThemeColor {
+  ThemeColor._();
 }
 
 ThemeData defaultLightMode = ThemeData(
@@ -40,8 +39,7 @@ ThemeData defaultLightMode = ThemeData(
   ),
   buttonTheme: ButtonThemeData(
     buttonColor: Colors.blue[300], // Button color is a soft blue
-    textTheme:
-        ButtonTextTheme.primary, // Use the primary text theme for buttons
+    textTheme: ButtonTextTheme.primary, // Use the primary text theme for buttons
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: Colors.white,
@@ -72,17 +70,16 @@ ThemeData defaultDarkMode = ThemeData(
   // Cards are a slightly lighter shade of black
   textTheme: const TextTheme(
     bodyLarge: TextStyle(
-        fontSize: 32.0,
-        color: Colors.white), // Main text color
-    bodyMedium:
-        TextStyle(color: Colors.white70), // Secondary text color (slightly
+      fontSize: 32.0,
+      color: Colors.white,
+    ), // Main text color
+    bodyMedium: TextStyle(color: Colors.white70), // Secondary text color (slightly
     // opaque)
   ),
   iconTheme: const IconThemeData(color: Colors.white70),
   buttonTheme: ButtonThemeData(
     buttonColor: Colors.blue[300], // Button color
-    textTheme:
-        ButtonTextTheme.primary, // Use the primary text theme for buttons
+    textTheme: ButtonTextTheme.primary, // Use the primary text theme for buttons
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: const Color(0xFF27292E),

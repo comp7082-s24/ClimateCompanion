@@ -1,4 +1,3 @@
-import "package:climate_companion/themes/theme_provider.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:weather/weather.dart";
@@ -29,8 +28,7 @@ class _WeatherViewState extends State<WeatherView> {
   Widget build(final BuildContext context) {
     return FutureBuilder(
       future: fetchWeatherFuture,
-      builder:
-          (final BuildContext context, final AsyncSnapshot<Weather> snapshot) {
+      builder: (final BuildContext context, final AsyncSnapshot<Weather> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
             child: CircularProgressIndicator(),
@@ -54,12 +52,13 @@ class _WeatherViewState extends State<WeatherView> {
         children: <Widget>[
           _title(),
           const SizedBox(height: 16),
-          _weatherContainer(
-              degrees:
-                  "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} Degrees",
-              weatherIcon: weatherIcon,
-              weather: w.weatherDescription.toString() ?? "Loading...",
-              link: "http://openweathermap.org/img/w/${w.weatherIcon}.png"),
+          _WeatherContainer(
+            degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} Degrees",
+            weatherIcon: weatherIcon,
+            weather: w.weatherDescription.toString(),
+            link: "http://openweathermap.org/img/w/${w.weatherIcon}.png",
+            w: w,
+          ),
           const SizedBox(height: 16),
           _nextDaysText(),
           const SizedBox(height: 16),
@@ -71,43 +70,44 @@ class _WeatherViewState extends State<WeatherView> {
               itemCount: entries.length,
               itemBuilder: (final BuildContext context, final int index) {
                 return Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: const [
-                        BoxShadow(
-                          blurRadius: 6,
-                          offset: Offset(6, 6),
-                          color: Colors.black26,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).cardColor,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: const [
+                      BoxShadow(
+                        blurRadius: 6,
+                        offset: Offset(6, 6),
+                        color: Colors.black26,
+                      ),
+                    ],
+                  ),
+                  height: MediaQuery.of(context).size.height / 6,
+                  width: MediaQuery.of(context).size.width / 4,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      const Text(
+                        "Cloudy",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    ),
-                    height: MediaQuery.of(context).size.height / 6,
-                    width: MediaQuery.of(context).size.width / 4,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        const Text(
-                          "Cloudy",
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
+                      ),
+                      const Icon(
+                        Icons.cloud,
+                        size: 24,
+                        color: Colors.blue,
+                      ),
+                      Text(
+                        entries[index],
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const Icon(
-                          Icons.cloud,
-                          size: 24,
-                          color: Colors.blue,
-                        ),
-                        Text(
-                          entries[index],
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ));
+                      ),
+                    ],
+                  ),
+                );
               },
               separatorBuilder: (final BuildContext context, final int index) {
                 return SizedBox(width: MediaQuery.of(context).size.width / 18);
@@ -143,18 +143,20 @@ class _WeatherViewState extends State<WeatherView> {
   }
 }
 
-class _weatherContainer extends StatelessWidget {
-  const _weatherContainer(
-      {super.key,
-      required this.degrees,
-      required this.weatherIcon,
-      required this.weather,
-      required this.link});
+class _WeatherContainer extends StatelessWidget {
+  const _WeatherContainer({
+    required this.degrees,
+    required this.weatherIcon,
+    required this.weather,
+    required this.link,
+    required this.w,
+  });
 
   final String degrees;
   final Icon weatherIcon;
   final String weather;
   final String link;
+  final Weather w;
 
   @override
   Widget build(final BuildContext context) {
@@ -202,7 +204,7 @@ class _weatherContainer extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              context.goNamed("aiSuggest");
+              context.goNamed("aiSuggest", extra: w);
             },
             child: const Text("CC, What are my options?"),
           ),

@@ -1,6 +1,5 @@
-import "package:climate_companion/components/appbar.dart";
 import "package:climate_companion/navigation/app_navigation.dart";
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
 class Profile extends StatefulWidget {
@@ -17,10 +16,11 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         actions: [
           IconButton(
-              onPressed: () {
-                context.goNamed(RoutePath.home.name);
-              },
-              icon: const Icon(Icons.close),),
+            onPressed: () {
+              context.goNamed(RoutePath.home.name);
+            },
+            icon: const Icon(Icons.close),
+          ),
         ],
       ),
       body: const Center(
