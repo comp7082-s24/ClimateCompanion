@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
-
 import "package:climate_companion/themes/theme_provider.dart";
 
 class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -30,6 +29,7 @@ class MainAppBar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
+  /// This is the standard height for an AppBar.
   @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight); // This is the standard height for an AppBar
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
