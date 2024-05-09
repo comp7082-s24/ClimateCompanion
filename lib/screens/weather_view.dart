@@ -1,6 +1,7 @@
 import "package:climate_companion/themes/theme_provider.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
+import "package:weather/weather.dart";
 
 class WeatherView extends StatefulWidget {
   const WeatherView({super.key, required final GoRouterState goRouterState});
@@ -14,6 +15,22 @@ class _WeatherViewState extends State<WeatherView> {
   final Icon weatherIcon = const Icon(Icons.cloud);
   final String weather = "Cloudy AF";
   final List<String> entries = <String>['A', 'B', 'C'];
+  WeatherFactory wf = WeatherFactory("587ea169202f172133a2f44d973687f1", language: Language.ENGLISH);
+  late Weather w;
+
+  void initState() {
+    super.initState();
+    fetchWeather();
+  }
+
+  // Asynchronous method to fetch weather data
+  void fetchWeather() async {
+    Weather currentWeather = await wf.currentWeatherByCityName("Oshawa");
+    setState(() {
+      w = currentWeather;
+    });
+  }
+
 
   @override
   Widget build(final BuildContext context) {
@@ -24,7 +41,7 @@ class _WeatherViewState extends State<WeatherView> {
         children: <Widget>[
           _title(),
           const SizedBox(height: 16),
-          _weatherContainer(degrees: degrees, weatherIcon: weatherIcon, weather: weather),
+          _weatherContainer(degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} Degrees", weatherIcon: weatherIcon, weather: w.weatherDescription ?? "Loading...", link: "http://openweathermap.org/img/w/${w.weatherIcon}.png"),
           const SizedBox(height: 16),
           _nextDaysText(),
           const SizedBox(height: 16),
@@ -54,7 +71,7 @@ class _WeatherViewState extends State<WeatherView> {
                     children: [
                       const Text(
                         "Cloudy",
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -115,11 +132,13 @@ class _weatherContainer extends StatelessWidget {
     required this.degrees,
     required this.weatherIcon,
     required this.weather,
+    required this.link
   });
 
   final String degrees;
   final Icon weatherIcon;
   final String weather;
+  final String link;
 
   @override
   Widget build(final BuildContext context) {
@@ -148,11 +167,14 @@ class _weatherContainer extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Icon(
-            weatherIcon.icon,
-            size: 64,
-            color: Colors.blue,
-          ),
+          Image.network(link,
+            fit: BoxFit.cover,
+            height: 64,),
+          // Icon(
+          //   weatherIcon.icon,
+          //   size: 64,
+          //   color: Colors.blue,
+          // ),
           Text(
             weather,
             style: const TextStyle(
