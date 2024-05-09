@@ -14,26 +14,39 @@ class _WeatherViewState extends State<WeatherView> {
   final String degrees = "Weather";
   final Icon weatherIcon = const Icon(Icons.cloud);
   final String weather = "Cloudy AF";
-  final List<String> entries = <String>['A', 'B', 'C'];
-  WeatherFactory wf = WeatherFactory("587ea169202f172133a2f44d973687f1", language: Language.ENGLISH);
-  late Weather w;
+  final List<String> entries = <String>["A", "B", "C"];
+  WeatherFactory wf = WeatherFactory("587ea169202f172133a2f44d973687f1");
 
+  late final Future<Weather> fetchWeatherFuture;
+
+  @override
   void initState() {
     super.initState();
-    fetchWeather();
+    fetchWeatherFuture = wf.currentWeatherByCityName("Burnaby");
   }
-
-  // Asynchronous method to fetch weather data
-  void fetchWeather() async {
-    Weather currentWeather = await wf.currentWeatherByCityName("Burnaby");
-    setState(() {
-      w = currentWeather;
-    });
-  }
-
 
   @override
   Widget build(final BuildContext context) {
+    return FutureBuilder(
+      future: fetchWeatherFuture,
+      builder:
+          (final BuildContext context, final AsyncSnapshot<Weather> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text("Error: ${snapshot.error}"),
+          );
+        } else {
+          return _buildWeatherView(snapshot.data!);
+        }
+      },
+    );
+  }
+
+  Widget _buildWeatherView(final Weather w) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -41,7 +54,12 @@ class _WeatherViewState extends State<WeatherView> {
         children: <Widget>[
           _title(),
           const SizedBox(height: 16),
-          _weatherContainer(degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} Degrees", weatherIcon: weatherIcon, weather: w.weatherDescription.toString() ?? "Loading...", link: "http://openweathermap.org/img/w/${w.weatherIcon}.png"),
+          _weatherContainer(
+              degrees:
+                  "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} Degrees",
+              weatherIcon: weatherIcon,
+              weather: w.weatherDescription.toString() ?? "Loading...",
+              link: "http://openweathermap.org/img/w/${w.weatherIcon}.png"),
           const SizedBox(height: 16),
           _nextDaysText(),
           const SizedBox(height: 16),
@@ -53,44 +71,43 @@ class _WeatherViewState extends State<WeatherView> {
               itemCount: entries.length,
               itemBuilder: (final BuildContext context, final int index) {
                 return Container(
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).cardColor,
-                    borderRadius: BorderRadius.circular(16),
-                    boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 6,
-                        offset: Offset(6, 6),
-                        color: Colors.black26,
-                      ),
-                    ],
-                  ),
-                  height: MediaQuery.of(context).size.height / 6,
-                  width: MediaQuery.of(context).size.width / 4,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      const Text(
-                        "Cloudy",
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: const [
+                        BoxShadow(
+                          blurRadius: 6,
+                          offset: Offset(6, 6),
+                          color: Colors.black26,
                         ),
-                      ),
-                      const Icon(
-                        Icons.cloud,
-                        size: 24,
-                        color: Colors.blue,
-                      ),
-                      Text(
-                        entries[index],
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      ],
+                    ),
+                    height: MediaQuery.of(context).size.height / 6,
+                    width: MediaQuery.of(context).size.width / 4,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Text(
+                          "Cloudy",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ],
-                  )
-                );
+                        const Icon(
+                          Icons.cloud,
+                          size: 24,
+                          color: Colors.blue,
+                        ),
+                        Text(
+                          entries[index],
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ));
               },
               separatorBuilder: (final BuildContext context, final int index) {
                 return SizedBox(width: MediaQuery.of(context).size.width / 18);
@@ -127,13 +144,12 @@ class _WeatherViewState extends State<WeatherView> {
 }
 
 class _weatherContainer extends StatelessWidget {
-  const _weatherContainer({
-    super.key,
-    required this.degrees,
-    required this.weatherIcon,
-    required this.weather,
-    required this.link
-  });
+  const _weatherContainer(
+      {super.key,
+      required this.degrees,
+      required this.weatherIcon,
+      required this.weather,
+      required this.link});
 
   final String degrees;
   final Icon weatherIcon;
@@ -167,9 +183,11 @@ class _weatherContainer extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Image.network(link,
+          Image.network(
+            link,
             fit: BoxFit.cover,
-            height: 64,),
+            height: 64,
+          ),
           // Icon(
           //   weatherIcon.icon,
           //   size: 64,
