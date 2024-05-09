@@ -25,7 +25,7 @@ class _WeatherViewState extends State<WeatherView> {
 
   // Asynchronous method to fetch weather data
   void fetchWeather() async {
-    Weather currentWeather = await wf.currentWeatherByCityName("Oshawa");
+    Weather currentWeather = await wf.currentWeatherByCityName("Burnaby");
     setState(() {
       w = currentWeather;
     });
@@ -41,7 +41,7 @@ class _WeatherViewState extends State<WeatherView> {
         children: <Widget>[
           _title(),
           const SizedBox(height: 16),
-          _weatherContainer(degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} Degrees", weatherIcon: weatherIcon, weather: w.weatherDescription ?? "Loading...", link: "http://openweathermap.org/img/w/${w.weatherIcon}.png"),
+          _weatherContainer(degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} Degrees", weatherIcon: weatherIcon, weather: w.weatherDescription.toString() ?? "Loading...", link: "http://openweathermap.org/img/w/${w.weatherIcon}.png"),
           const SizedBox(height: 16),
           _nextDaysText(),
           const SizedBox(height: 16),
