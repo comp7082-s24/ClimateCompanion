@@ -1,8 +1,35 @@
+import "dart:convert";
+
 import "package:flutter/material.dart";
 import "package:flutter_gemini/flutter_gemini.dart";
 import "package:go_router/go_router.dart";
 import "package:weather/weather.dart";
 import "package:flutter_gemini/src/models/candidates/candidates.dart";
+
+class ActivityList {
+  final List<Activity> activities;
+
+  ActivityList({required this.activities});
+
+  factory ActivityList.fromJson(final List<dynamic> json) {
+    final List<Activity> activities = json.map((final activity) => Activity.fromJson(activity as Map<String, dynamic>)).toList();
+    return ActivityList(activities: activities);
+  }
+}
+
+class Activity {
+  final String title;
+  final String description;
+
+  Activity({required this.title, required this.description});
+
+  factory Activity.fromJson(final Map<String, dynamic> json) {
+    return Activity(
+      title: json["title"] as String,
+      description: json["description"] as String,
+    );
+  }
+}
 
 class AiSuggestView extends StatefulWidget {
   const AiSuggestView({
@@ -19,6 +46,7 @@ class AiSuggestView extends StatefulWidget {
 class _AiSuggestViewState extends State<AiSuggestView> {
   late Future<Candidates?> fetchCandidatesFuture;
   late final Weather weather;
+  late ActivityList _activities;
 
   @override
   void initState() {
@@ -28,16 +56,35 @@ class _AiSuggestViewState extends State<AiSuggestView> {
 
     final prompt = "Give me a list of 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) when the "
         "weather is "
-        "${weather.weatherDescription}. Format the text.";
+        "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
 
     fetchCandidatesFuture = Gemini.instance.text(prompt);
+
+    fetchCandidatesFuture.then((final value) {
+      final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
+      final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
+      final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
+
+      setState(() {
+        _activities = ActivityList.fromJson(activityListJson);
+      });
+    });
   }
 
   void _reSuggest() {
     setState(() {
-      fetchCandidatesFuture = Gemini.instance
-          .text("I didn't like those suggestions. Give me another list of 3 of activities to do in ${weather.areaName} located in Country "
-              "Code (${weather.country}) when the weather is ${weather.weatherDescription}. Format the text.");
+      final prompt = "Give me a list of another 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) "
+          "when the "
+          "weather is "
+          "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
+      fetchCandidatesFuture = Gemini.instance.text(prompt);
+
+      fetchCandidatesFuture.then((final value) {
+        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
+        final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
+        final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
+        _activities = ActivityList.fromJson(activityListJson);
+      });
     });
   }
 
@@ -79,9 +126,27 @@ class _AiSuggestViewState extends State<AiSuggestView> {
                   )
                 : const SizedBox.shrink(),
             const SizedBox(height: 16),
-            Text(
-              c.output ?? "No suggestions found.",
-              style: Theme.of(context).textTheme.bodySmall,
+            ..._activities.activities.map(
+              (final activity) => ListTile(
+                title: Text(
+                  activity.title,
+                  style: Theme.of(context).textTheme.labelLarge,
+                ),
+                subtitle: Text(activity.description),
+                trailing: IconButton(
+                  icon: const Icon(Icons.favorite_outline),
+                  onPressed: () {
+                    showDialog<void>(
+                      context: context,
+                      builder: (final BuildContext context) {
+                        return const AlertDialog(
+                          title: Text("FAVOURITE BUTTON PRESSED"),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
             ),
             const SizedBox(height: 16),
             Text(
