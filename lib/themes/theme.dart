@@ -51,7 +51,7 @@ ThemeData defaultLightMode = ThemeData(
 ThemeData defaultDarkMode = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.blueGrey,
-  primaryColor: Colors.black,
+  primaryColor: Colors.grey[900],
   // Main color is black
   primaryColorLight: Colors.grey[800],
   // Lighter shade of grey instead of blue
@@ -88,3 +88,10 @@ ThemeData defaultDarkMode = ThemeData(
     type: BottomNavigationBarType.fixed,
   ),
 );
+
+// TODO FRomSEED
+// ThemeData defaultDarkModde = ThemeData(
+//   colorScheme: ColorScheme.fromSeed(seedColor: seedColor),,
+// );
+
+
