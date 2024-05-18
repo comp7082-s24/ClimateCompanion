@@ -2,10 +2,13 @@ import "package:climate_companion/components/scaffold_with_nav_bar.dart";
 import "package:climate_companion/navigation.dart";
 import "package:climate_companion/themes/theme_provider.dart";
 import "package:flutter/material.dart";
+import "package:flutter_gemini/flutter_gemini.dart";
 import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 
 void main() {
+  Gemini.init(apiKey: "AIzaSyC6Ml5kzEFC736NQBs_ctUxbWyVkeoPwO4");
+
   runApp(
     ChangeNotifierProvider(
       create: (final BuildContext context) => ThemeProvider(),

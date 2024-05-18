@@ -70,10 +70,12 @@ class _WeatherViewState extends State<WeatherView> {
         if (snapshot.connectionState == ConnectionState.done) {
           w = snapshot.data!;
           return MainWeatherContainer(
-              degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} °C",
-              weatherIcon: weatherIcon,
-              weather: w.weatherDescription.toString(),
-              link: "http://openweathermap.org/img/w/${w.weatherIcon}.png");
+            degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} °C",
+            weatherIcon: weatherIcon,
+            weather: w.weatherDescription.toString(),
+            link: "http://openweathermap.org/img/w/${w.weatherIcon}.png",
+            w: w,
+          );
         } else {
           return const Center(child: CircularProgressIndicator());
         }
@@ -177,12 +179,14 @@ class MainWeatherContainer extends StatelessWidget {
       required this.degrees,
       required this.weatherIcon,
       required this.weather,
-      required this.link});
+      required this.link,
+      required this.w});
 
   final String degrees;
   final Icon weatherIcon;
   final String weather;
   final String link;
+  final Weather w;
 
   @override
   Widget build(final BuildContext context) {
@@ -225,7 +229,7 @@ class MainWeatherContainer extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              context.goNamed("aiSuggest");
+              context.goNamed("aiSuggest", extra: w);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
