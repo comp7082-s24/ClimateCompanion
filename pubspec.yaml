@@ -38,6 +38,9 @@ dependencies:
   isar: ^3.1.0+1
   isar_flutter_libs: ^3.1.0+1
 
+  # Used for favourites storage
+  shared_preferences: ^2.0.6
+
 
 
 dev_dependencies:
