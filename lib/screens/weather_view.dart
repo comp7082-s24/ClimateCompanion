@@ -19,6 +19,7 @@ class _WeatherViewState extends State<WeatherView> {
       WeatherFactory("587ea169202f172133a2f44d973687f1", language: Language.ENGLISH);
   late Weather w;
   late List<Weather> forecast;
+  late List<Weather> nextFiveDays;
 
   @override
   void initState() {
@@ -26,8 +27,28 @@ class _WeatherViewState extends State<WeatherView> {
   }
 
   Future<List<Weather>> fetchNextFiveDays() async {
-    return await wf.fiveDayForecastByCityName("Burnaby");
+    final List<Weather> data = await wf.fiveDayForecastByCityName("Burnaby");
+    final Map<String, Weather> weatherByDay = {};
+    for (final Weather w in data) {
+      // Only grabs the first weather data for each day at 12pm
+      if (!weatherByDay.containsKey(w.date!.day.toString())) {
+        weatherByDay[w.date!.day.toString()] = w;
+      }
+    }
+    print(weatherByDay.values.toList());
+    return weatherByDay.values.toList();
   }
+
+
+
+  List<Weather> fetchFiveDays(final List<Weather> data) {
+    print(data);
+    return nextFiveDays;
+  }
+
+
+
+
 
   // Asynchronous method to fetch weather data
   Future<Weather> fetchWeather() async {
@@ -125,7 +146,7 @@ class UpcomingBox extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.all(8),
-        itemCount: 3,
+        itemCount: 5,
         itemBuilder: (final BuildContext context, final int index) {
           return Builder(
             // Created a builder to fetch the latest theme
@@ -158,6 +179,13 @@ class UpcomingBox extends StatelessWidget {
                       "http://openweathermap.org/img/w/${forecast[index].weatherIcon}.png",
                       fit: BoxFit.cover,
                       height: 32,
+                    ),
+                    Text(
+                      "${forecast[index].date?.month}/${forecast[index].date?.day}",
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
