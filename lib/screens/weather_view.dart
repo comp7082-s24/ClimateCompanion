@@ -35,19 +35,14 @@ class _WeatherViewState extends State<WeatherView> {
         weatherByDay[w.date!.day.toString()] = w;
       }
     }
-    print(weatherByDay.values.toList());
     return weatherByDay.values.toList();
   }
 
 
 
   List<Weather> fetchFiveDays(final List<Weather> data) {
-    print(data);
     return nextFiveDays;
   }
-
-
-
 
 
   // Asynchronous method to fetch weather data
