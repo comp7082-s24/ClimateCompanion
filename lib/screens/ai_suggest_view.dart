@@ -48,6 +48,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
   late Future<Candidates?> fetchCandidatesFuture;
   late final Weather weather;
   late ActivityList _activities;
+  List<Activity> _selected = [];
 
   @override
   void initState() {
@@ -82,6 +83,9 @@ class _AiSuggestViewState extends State<AiSuggestView> {
     };
     favoriteActivities.add(jsonEncode(favoriteActivity));
     await prefs.setStringList("favorites", favoriteActivities);
+    setState(() {
+      _selected.contains(activity) ? _selected.remove(activity) : _selected.add(activity);
+    });
   }
 
   void _reSuggest() {
@@ -147,7 +151,8 @@ class _AiSuggestViewState extends State<AiSuggestView> {
                 ),
                 subtitle: Text(activity.description),
                 trailing: IconButton(
-                  icon: const Icon(Icons.favorite_outline),
+                  icon: _selected.contains(activity) ? const Icon(Icons
+                      .favorite_outlined) : const Icon(Icons.favorite_outline),
                   onPressed: () async {
                     await saveFavorite(activity);
                     showDialog<void>(
