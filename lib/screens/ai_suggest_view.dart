@@ -7,6 +7,12 @@ import "package:shared_preferences/shared_preferences.dart";
 import "package:weather/weather.dart";
 import "package:flutter_gemini/src/models/candidates/candidates.dart";
 
+
+final ValueNotifier<DateTime> dateUpdateRequested = ValueNotifier<DateTime>
+  (DateTime.now());
+
+
+
 class ActivityList {
   final List<Activity> activities;
 
@@ -47,30 +53,34 @@ class AiSuggestView extends StatefulWidget {
 class _AiSuggestViewState extends State<AiSuggestView> {
   late Future<Candidates?> fetchCandidatesFuture;
   late final Weather weather;
-  late ActivityList _activities;
+  ActivityList _activities = ActivityList(activities: []);
   List<Activity> _selected = [];
 
   @override
   void initState() {
     super.initState();
+    try {
+      weather = widget.goRouterState.extra as Weather;
+      final prompt = "Give me a list of 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) when the "
+          "weather is "
+          "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
 
-    weather = widget.goRouterState.extra as Weather;
+      fetchCandidatesFuture = Gemini.instance.text(prompt);
 
-    final prompt = "Give me a list of 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) when the "
-        "weather is "
-        "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
+      fetchCandidatesFuture.then((final value) {
+        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
+        final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
+        final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
 
-    fetchCandidatesFuture = Gemini.instance.text(prompt);
-
-    fetchCandidatesFuture.then((final value) {
-      final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
-      final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
-      final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
-
-      setState(() {
-        _activities = ActivityList.fromJson(activityListJson);
+        setState(() {
+          _activities = ActivityList.fromJson(activityListJson);
+        });
       });
-    });
+    }catch(e){
+      fetchCandidatesFuture = Future.error("error");
+      _activities = ActivityList(activities: []);
+    }
+
   }
 
   Future<void> saveFavorite(final Activity activity) async {
@@ -85,6 +95,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
     await prefs.setStringList("favorites", favoriteActivities);
     setState(() {
       _selected.contains(activity) ? _selected.remove(activity) : _selected.add(activity);
+      dateUpdateRequested.value = DateTime.now();
     });
   }
 

@@ -1,4 +1,6 @@
+import "dart:async";
 import "dart:convert";
+import "package:climate_companion/screens/ai_suggest_view.dart";
 import "package:flutter/material.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:go_router/go_router.dart";
@@ -60,6 +62,13 @@ class _FavouritesViewState extends State<FavouritesView> {
   void initState() {
     super.initState();
     _loadFavorites();
+    dateUpdateRequested.addListener(_loadFavorites);
+  }
+
+  @override
+  void dispose() {
+    dateUpdateRequested.removeListener(_loadFavorites);
+    super.dispose();
   }
 
   void _loadFavorites() {
