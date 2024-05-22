@@ -30,7 +30,7 @@ class _WeatherViewState extends State<WeatherView> {
     final List<Weather> data = await wf.fiveDayForecastByCityName("Burnaby");
     final Map<String, Weather> weatherByDay = {};
     for (final Weather w in data) {
-      // Only grabs the first weather data for each day at 12pm
+      // Only grabs the first weather data for each day at 2 am
       if (!weatherByDay.containsKey(w.date!.day.toString())) {
         weatherByDay[w.date!.day.toString()] = w;
       }
@@ -106,7 +106,7 @@ class _WeatherViewState extends State<WeatherView> {
 
   Text _nextDaysText() {
     return const Text(
-      "The Next 3 Days...",
+      "The Next Few Days...",
       style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
