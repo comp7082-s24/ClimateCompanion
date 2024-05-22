@@ -3,6 +3,7 @@ import "dart:convert";
 import "package:flutter/material.dart";
 import "package:flutter_gemini/flutter_gemini.dart";
 import "package:go_router/go_router.dart";
+import "package:shared_preferences/shared_preferences.dart";
 import "package:weather/weather.dart";
 import "package:flutter_gemini/src/models/candidates/candidates.dart";
 
@@ -71,6 +72,18 @@ class _AiSuggestViewState extends State<AiSuggestView> {
     });
   }
 
+  Future<void> saveFavorite(final Activity activity) async {
+    final prefs = await SharedPreferences.getInstance();
+    final List<String> favoriteActivities = prefs.getStringList("favorites") ?? [];
+    final Map<String, dynamic> favoriteActivity = {
+      "title": activity.title,
+      "description": activity.description,
+      "weatherDescription": weather.weatherDescription,
+    };
+    favoriteActivities.add(jsonEncode(favoriteActivity));
+    await prefs.setStringList("favorites", favoriteActivities);
+  }
+
   void _reSuggest() {
     setState(() {
       final prompt = "Give me a list of another 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) "
@@ -135,12 +148,13 @@ class _AiSuggestViewState extends State<AiSuggestView> {
                 subtitle: Text(activity.description),
                 trailing: IconButton(
                   icon: const Icon(Icons.favorite_outline),
-                  onPressed: () {
+                  onPressed: () async {
+                    await saveFavorite(activity);
                     showDialog<void>(
                       context: context,
                       builder: (final BuildContext context) {
                         return const AlertDialog(
-                          title: Text("FAVOURITE BUTTON PRESSED"),
+                          title: Text("Suggestion Saved Successfully."),
                         );
                       },
                     );
