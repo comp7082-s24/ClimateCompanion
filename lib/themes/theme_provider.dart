@@ -11,9 +11,12 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // @param string
   void toggleTheme() {
+    // Switch Statement
+
     _themeData =
-        _themeData == defaultLightMode ? defaultDarkMode : defaultLightMode;
+        _themeData == defaultLightMode ? defaultDarkModde : defaultLightMode;
     notifyListeners();
   }
 }
