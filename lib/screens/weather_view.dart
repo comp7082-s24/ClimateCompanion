@@ -38,8 +38,6 @@ class _WeatherViewState extends State<WeatherView> {
     return weatherByDay.values.toList();
   }
 
-
-
   List<Weather> fetchFiveDays(final List<Weather> data) {
     return nextFiveDays;
   }

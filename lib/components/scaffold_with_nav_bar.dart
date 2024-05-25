@@ -42,7 +42,7 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
   @override
   Widget build(final BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(),
+      // appBar: const MainAppBar(),
       body: widget.navigationShell,
       bottomNavigationBar: BottomNavigationBar(
         items: routeDestinations
