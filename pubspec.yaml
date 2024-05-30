@@ -41,7 +41,8 @@ dependencies:
   # Used for favourites storage
   shared_preferences: ^2.0.6
 
-
+  # Used for date formatting
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -54,6 +55,3 @@ dev_dependencies:
 flutter:
   generate: true
   uses-material-design: true
-
-  assets:
-    - assets/images/

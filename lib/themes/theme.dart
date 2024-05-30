@@ -1,5 +1,23 @@
 import "package:flutter/material.dart";
 
+final List<Color> colours = [
+  const Color(0xFF2196F3),
+  const Color(0xFFFFC107),
+  const Color(0xFF4CAF50),
+  const Color(0xFFFF9800),
+  const Color(0xFF9C27B0),
+  const Color(0xFFE91E63),
+  const Color(0xFF00BCD4),
+  const Color(0xFF8BC34A),
+  const Color(0xFF3F51B5),
+  const Color(0xFF795548),
+  const Color(0xFFFF5722),
+  const Color(0xFF673AB7),
+  const Color(0xFF009688),
+  const Color(0xFFCDDC39),
+  const Color(0xFF607D8B),
+  const Color(0xFF9E9E9E),
+];
 
 ThemeData defaultLightMode = ThemeData(
   brightness: Brightness.light,
@@ -24,7 +42,6 @@ ThemeData defaultLightMode = ThemeData(
   // Cards are very light grey, near white
   textTheme: TextTheme(
     bodyLarge: const TextStyle(
-      fontSize: 32.0,
       color: Colors.black,
     ), // Main text color is black for readability
     bodyMedium: TextStyle(
@@ -67,18 +84,14 @@ ThemeData defaultDarkMode = ThemeData(
   cardColor: Colors.grey[850],
   // Cards are a slightly lighter shade of black
   textTheme: const TextTheme(
-    bodyLarge: TextStyle(
-        fontSize: 32.0,
-        color: Colors.white), // Main text color
-    bodyMedium:
-        TextStyle(color: Colors.white70), // Secondary text color (slightly
+    bodyLarge: TextStyle(color: Colors.white), // Main text color
+    bodyMedium: TextStyle(color: Colors.white70), // Secondary text color (slightly
     // opaque)
   ),
   iconTheme: const IconThemeData(color: Colors.white70),
   buttonTheme: ButtonThemeData(
     buttonColor: Colors.blue[300], // Button color
-    textTheme:
-        ButtonTextTheme.primary, // Use the primary text theme for buttons
+    textTheme: ButtonTextTheme.primary, // Use the primary text theme for buttons
   ),
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: const Color(0xFF27292E),
@@ -94,5 +107,3 @@ ThemeData defaultDarkModde = ThemeData(
   colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
   // brightness: Brightness.dark,
 );
-
-

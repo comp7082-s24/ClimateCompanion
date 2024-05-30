@@ -1,28 +1,19 @@
 import "package:climate_companion/screens/ai_suggest_view.dart";
+import "package:climate_companion/screens/create_profile_view.dart";
 import "package:climate_companion/screens/favourites_view.dart";
 import "package:climate_companion/screens/profile_view.dart";
+import "package:climate_companion/screens/update_profile_view.dart";
 import "package:climate_companion/screens/weather_view.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
-final GlobalKey<NavigatorState> rootNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: "root");
-
-final GlobalKey<NavigatorState> weatherNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: "weatherNavKey");
-
-final GlobalKey<NavigatorState> aiSuggestNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: "aiSuggestNavKey");
-
-final GlobalKey<NavigatorState> favoritesNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: "favoritesNavKey");
-
-final GlobalKey<NavigatorState> profileNavigatorKey =
-    GlobalKey<NavigatorState>(debugLabel: "profileNavKey");
+final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: "root");
+final GlobalKey<NavigatorState> weatherNavigatorKey = GlobalKey<NavigatorState>(debugLabel: "weatherNavKey");
+final GlobalKey<NavigatorState> favoritesNavigatorKey = GlobalKey<NavigatorState>(debugLabel: "favoritesNavKey");
+final GlobalKey<NavigatorState> profileNavigatorKey = GlobalKey<NavigatorState>(debugLabel: "profileNavKey");
 
 final List<Destination> destinations = <Destination>[
   WeatherDestination(),
-  AiSuggestDestination(),
   FavoritesDestination(),
   ProfileDestination(),
 ];
@@ -100,5 +91,35 @@ final class ProfileDestination extends Destination {
             final GoRouterState state,
           ) =>
               ProfileView(goRouterState: state),
+        );
+}
+
+final class CreateProfileDestination extends Destination {
+  CreateProfileDestination()
+      : super(
+          name: "create_profile",
+          path: "/createProfile",
+          title: "Create Profile",
+          icon: Icons.account_circle,
+          builder: (
+            final BuildContext context,
+            final GoRouterState state,
+          ) =>
+              const CreateProfileView(),
+        );
+}
+
+final class UpdateProfileDestination extends Destination {
+  UpdateProfileDestination()
+      : super(
+          name: "update_profile",
+          path: "/updateProfile",
+          title: "Update Profile",
+          icon: Icons.account_circle,
+          builder: (
+            final BuildContext context,
+            final GoRouterState state,
+          ) =>
+              const UpdateProfileView(),
         );
 }

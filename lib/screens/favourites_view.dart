@@ -16,7 +16,7 @@ class FavoriteActivity {
     required this.weatherDescription,
   });
 
-  factory FavoriteActivity.fromJson(Map<String, dynamic> json) {
+  factory FavoriteActivity.fromJson(final Map<String, dynamic> json) {
     return FavoriteActivity(
       title: json["title"] as String,
       description: json["description"] as String,
@@ -39,7 +39,7 @@ class FavoritesManager {
   Future<List<FavoriteActivity>> getFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     final List<String> favoriteActivities = prefs.getStringList(_favoritesKey) ?? [];
-    return favoriteActivities.map((e) => FavoriteActivity.fromJson(jsonDecode(e) as Map<String, dynamic>)).toList();
+    return favoriteActivities.map((final e) => FavoriteActivity.fromJson(jsonDecode(e) as Map<String, dynamic>)).toList();
   }
 }
 
@@ -52,7 +52,7 @@ class FavouritesView extends StatefulWidget {
   final GoRouterState goRouterState;
 
   @override
-  _FavouritesViewState createState() => _FavouritesViewState();
+  State<FavouritesView> createState() => _FavouritesViewState();
 }
 
 class _FavouritesViewState extends State<FavouritesView> {
@@ -77,9 +77,9 @@ class _FavouritesViewState extends State<FavouritesView> {
     });
   }
 
-  Map<String, List<FavoriteActivity>> _groupFavoritesByWeather(List<FavoriteActivity> favorites) {
+  Map<String, List<FavoriteActivity>> _groupFavoritesByWeather(final List<FavoriteActivity> favorites) {
     final Map<String, List<FavoriteActivity>> groupedFavorites = {};
-    for (var activity in favorites) {
+    for (final activity in favorites) {
       if (!groupedFavorites.containsKey(activity.weatherDescription)) {
         groupedFavorites[activity.weatherDescription] = [];
       }
@@ -90,50 +90,45 @@ class _FavouritesViewState extends State<FavouritesView> {
 
   @override
   Widget build(final BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Favorites"),
-      ),
-      body: FutureBuilder<List<FavoriteActivity>>(
-        future: _favoritesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text("Error: ${snapshot.error}"),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text("No favorites yet."),
-            );
-          } else {
-            final favorites = snapshot.data!;
-            final groupedFavorites = _groupFavoritesByWeather(favorites);
-            return ListView(
-              children: groupedFavorites.entries.map((entry) {
-                return ExpansionTile(
-                  title: Text(
-                    entry.key.toUpperCase(),
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  children: entry.value.map((activity) {
-                    return ListTile(
-                      title: Text(
-                        activity.title,
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      subtitle: Text(activity.description),
-                    );
-                  }).toList(),
-                );
-              }).toList(),
-            );
-          }
-        },
-      ),
+    return FutureBuilder<List<FavoriteActivity>>(
+      future: _favoritesFuture,
+      builder: (final context, final snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text("Error: ${snapshot.error}"),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(
+            child: Text("No favorites yet."),
+          );
+        } else {
+          final favorites = snapshot.data!;
+          final groupedFavorites = _groupFavoritesByWeather(favorites);
+          return ListView(
+            children: groupedFavorites.entries.map((final entry) {
+              return ExpansionTile(
+                title: Text(
+                  entry.key.toUpperCase(),
+                  style: const TextStyle(fontSize: 24),
+                ),
+                children: entry.value.map((final activity) {
+                  return ListTile(
+                    title: Text(
+                      activity.title,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    subtitle: Text(activity.description),
+                  );
+                }).toList(),
+              );
+            }).toList(),
+          );
+        }
+      },
     );
   }
 }

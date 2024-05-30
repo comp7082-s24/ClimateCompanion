@@ -1,4 +1,3 @@
-import "package:climate_companion/components/appbar.dart";
 import "package:climate_companion/navigation.dart";
 import "package:collection/collection.dart";
 import "package:flutter/material.dart";
@@ -29,8 +28,7 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
     for (final branch in widget.navigationShell.route.branches) {
       for (final route in branch.routes) {
         if (route is GoRoute) {
-          final destination = destinations
-              .firstWhereOrNull((final element) => element.name == route.name);
+          final destination = destinations.firstWhereOrNull((final element) => element.name == route.name);
           if (destination != null) {
             routeDestinations.add(destination);
           }
@@ -42,8 +40,10 @@ class _ScaffoldWithNavBarState extends State<ScaffoldWithNavBar> {
   @override
   Widget build(final BuildContext context) {
     return Scaffold(
-      // appBar: const MainAppBar(),
-      body: widget.navigationShell,
+      body: Padding(
+        padding: const EdgeInsets.only(top: kToolbarHeight),
+        child: widget.navigationShell,
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: routeDestinations
             .map(

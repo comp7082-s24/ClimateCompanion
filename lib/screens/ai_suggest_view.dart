@@ -1,17 +1,13 @@
+// ignore: implementation_imports
+import "package:flutter_gemini/src/models/candidates/candidates.dart";
 import "dart:convert";
-
 import "package:flutter/material.dart";
 import "package:flutter_gemini/flutter_gemini.dart";
 import "package:go_router/go_router.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:weather/weather.dart";
-import "package:flutter_gemini/src/models/candidates/candidates.dart";
 
-
-final ValueNotifier<DateTime> dateUpdateRequested = ValueNotifier<DateTime>
-  (DateTime.now());
-
-
+final ValueNotifier<DateTime> dateUpdateRequested = ValueNotifier<DateTime>(DateTime.now());
 
 class ActivityList {
   final List<Activity> activities;
@@ -54,7 +50,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
   late Future<Candidates?> fetchCandidatesFuture;
   late final Weather weather;
   ActivityList _activities = ActivityList(activities: []);
-  List<Activity> _selected = [];
+  final List<Activity> _selected = [];
 
   @override
   void initState() {
@@ -76,11 +72,10 @@ class _AiSuggestViewState extends State<AiSuggestView> {
           _activities = ActivityList.fromJson(activityListJson);
         });
       });
-    }catch(e){
+    } catch (e) {
       fetchCandidatesFuture = Future.error("error");
       _activities = ActivityList(activities: []);
     }
-
   }
 
   Future<void> saveFavorite(final Activity activity) async {
@@ -118,24 +113,29 @@ class _AiSuggestViewState extends State<AiSuggestView> {
 
   @override
   Widget build(final BuildContext context) {
-    return FutureBuilder(
-      future: fetchCandidatesFuture,
-      builder: (
-        final BuildContext context,
-        final AsyncSnapshot<Candidates?> snapshot,
-      ) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text("Error: ${snapshot.error}"),
-          );
-        } else {
-          return _buildAiSuggestView(snapshot.data!);
-        }
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("AI Suggest"),
+      ),
+      body: FutureBuilder(
+        future: fetchCandidatesFuture,
+        builder: (
+          final BuildContext context,
+          final AsyncSnapshot<Candidates?> snapshot,
+        ) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text("Error: ${snapshot.error}"),
+            );
+          } else {
+            return _buildAiSuggestView(snapshot.data!);
+          }
+        },
+      ),
     );
   }
 
@@ -162,18 +162,19 @@ class _AiSuggestViewState extends State<AiSuggestView> {
                 ),
                 subtitle: Text(activity.description),
                 trailing: IconButton(
-                  icon: _selected.contains(activity) ? const Icon(Icons
-                      .favorite_outlined) : const Icon(Icons.favorite_outline),
+                  icon: _selected.contains(activity) ? const Icon(Icons.favorite_outlined) : const Icon(Icons.favorite_outline),
                   onPressed: () async {
                     await saveFavorite(activity);
-                    showDialog<void>(
-                      context: context,
-                      builder: (final BuildContext context) {
-                        return const AlertDialog(
-                          title: Text("Suggestion Saved Successfully."),
-                        );
-                      },
-                    );
+                    if (mounted) {
+                      showDialog<void>(
+                        context: context,
+                        builder: (final BuildContext context) {
+                          return const AlertDialog(
+                            title: Text("Suggestion Saved Successfully."),
+                          );
+                        },
+                      );
+                    }
                   },
                 ),
               ),

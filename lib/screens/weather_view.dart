@@ -1,6 +1,7 @@
-import "package:climate_companion/themes/theme_provider.dart";
+import "package:climate_companion/state/app_state_provider.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
+import "package:provider/provider.dart";
 import "package:weather/weather.dart";
 
 class WeatherView extends StatefulWidget {
@@ -14,9 +15,8 @@ class _WeatherViewState extends State<WeatherView> {
   final String degrees = "Weather";
   final Icon weatherIcon = const Icon(Icons.cloud);
   final String weather = "Cloudy AF";
-  final List<String> entries = <String>['A', 'B', 'C'];
-  WeatherFactory wf =
-      WeatherFactory("587ea169202f172133a2f44d973687f1", language: Language.ENGLISH);
+  final List<String> entries = <String>["A", "B", "C"];
+  WeatherFactory wf = WeatherFactory("587ea169202f172133a2f44d973687f1");
   late Weather w;
   late List<Weather> forecast;
   late List<Weather> nextFiveDays;
@@ -42,7 +42,6 @@ class _WeatherViewState extends State<WeatherView> {
     return nextFiveDays;
   }
 
-
   // Asynchronous method to fetch weather data
   Future<Weather> fetchWeather() async {
     return await wf.currentWeatherByCityName("Burnaby");
@@ -50,12 +49,13 @@ class _WeatherViewState extends State<WeatherView> {
 
   @override
   Widget build(final BuildContext context) {
+    final name = Provider.of<AppStateProvider>(context).name ?? "";
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          _title(),
+          _title(name),
           const SizedBox(height: 16),
           _buildWeatherView(),
           const SizedBox(height: 16),
@@ -67,10 +67,10 @@ class _WeatherViewState extends State<WeatherView> {
     );
   }
 
-  Text _title() {
-    return const Text(
-      "Greetings Charlie!",
-      style: TextStyle(
+  Text _title(final String name) {
+    return Text(
+      "Greetings $name!",
+      style: const TextStyle(
         fontSize: 32,
         fontWeight: FontWeight.bold,
       ),
@@ -195,13 +195,14 @@ class UpcomingBox extends StatelessWidget {
 }
 
 class MainWeatherContainer extends StatelessWidget {
-  const MainWeatherContainer(
-      {super.key,
-      required this.degrees,
-      required this.weatherIcon,
-      required this.weather,
-      required this.link,
-      required this.w});
+  const MainWeatherContainer({
+    super.key,
+    required this.degrees,
+    required this.weatherIcon,
+    required this.weather,
+    required this.link,
+    required this.w,
+  });
 
   final String degrees;
   final Icon weatherIcon;
@@ -250,7 +251,7 @@ class MainWeatherContainer extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
-              context.goNamed("aiSuggest", extra: w);
+              context.pushNamed("aiSuggest", extra: w);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).primaryColor,
