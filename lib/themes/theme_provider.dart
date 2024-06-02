@@ -16,7 +16,7 @@ class ThemeProvider extends ChangeNotifier {
     // Switch Statement
 
     _themeData =
-        _themeData == defaultLightMode ? defaultDarkModde : defaultLightMode;
+        _themeData == defaultLightMode ? defaultDarkMode : defaultLightMode;
     notifyListeners();
   }
 }

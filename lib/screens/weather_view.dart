@@ -1,4 +1,5 @@
 import "package:climate_companion/state/app_state_provider.dart";
+import "package:climate_companion/utils/strings.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
@@ -86,7 +87,7 @@ class _WeatherViewState extends State<WeatherView> {
           return MainWeatherContainer(
             degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} °C",
             weatherIcon: weatherIcon,
-            weather: w.weatherDescription.toString(),
+            weather: w.weatherDescription.toString().toTitleCase(),
             link: "http://openweathermap.org/img/w/${w.weatherIcon}.png",
             w: w,
           );
