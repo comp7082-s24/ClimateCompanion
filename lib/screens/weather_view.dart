@@ -1,3 +1,4 @@
+import "package:climate_companion/components/rounded_container.dart";
 import "package:climate_companion/state/app_state_provider.dart";
 import "package:climate_companion/utils/strings.dart";
 import "package:flutter/material.dart";
@@ -50,19 +51,21 @@ class _WeatherViewState extends State<WeatherView> {
   @override
   Widget build(final BuildContext context) {
     final name = Provider.of<AppStateProvider>(context).name ?? "";
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          _title(name),
-          const SizedBox(height: 16),
-          _buildWeatherView(),
-          const SizedBox(height: 16),
-          _nextDaysText(),
-          const SizedBox(height: 16),
-          _buildThreeDays(),
-        ],
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _title(name),
+            const SizedBox(height: 32),
+            _buildWeatherView(),
+            const SizedBox(height: 32),
+            _nextDaysText(),
+            const SizedBox(height: 32),
+            _buildThreeDays(),
+          ],
+        ),
       ),
     );
   }
@@ -90,7 +93,15 @@ class _WeatherViewState extends State<WeatherView> {
             w: w,
           );
         } else {
-          return const Center(child: CircularProgressIndicator());
+          // return const Center(child: CircularProgressIndicator());
+          return roundedContainer(
+            color: Colors.white,
+            height: 200,
+            width: 200,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         }
       },
     );
@@ -114,9 +125,36 @@ class _WeatherViewState extends State<WeatherView> {
           forecast = snapshot.data!;
           return UpcomingBox(forecast: forecast);
         } else {
-          return const Center(child: CircularProgressIndicator());
+          return const UpcomingBoxLoading();
         }
       },
+    );
+  }
+}
+
+class UpcomingBoxLoading extends StatelessWidget {
+  const UpcomingBoxLoading({super.key});
+
+  @override
+  Widget build(final BuildContext context) {
+    return SizedBox(
+      height: MediaQuery.of(context).size.height / 6,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.all(8),
+        itemCount: 5,
+        itemBuilder: (final BuildContext context, final int index) {
+          return roundedContainer(
+            color: Theme.of(context).cardColor,
+            height: MediaQuery.of(context).size.height / 6,
+            width: MediaQuery.of(context).size.width / 4,
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        },
+        separatorBuilder: (final BuildContext context, final int index) {
+          return SizedBox(width: MediaQuery.of(context).size.width / 18);
+        },
+      ),
     );
   }
 }
@@ -141,18 +179,8 @@ class UpcomingBox extends StatelessWidget {
           return Builder(
             // Created a builder to fetch the latest theme
             builder: (final context) {
-              return Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).cardColor,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      blurRadius: 6,
-                      offset: Offset(6, 6),
-                      color: Colors.black26,
-                    ),
-                  ],
-                ),
+              return roundedContainer(
+                color: Theme.of(context).cardColor,
                 height: MediaQuery.of(context).size.height / 6,
                 width: MediaQuery.of(context).size.width / 4,
                 child: Column(
@@ -207,21 +235,11 @@ class MainWeatherContainer extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    return Container(
+    return roundedContainer(
       margin: const EdgeInsets.all(4),
+      color: Theme.of(context).cardColor,
       height: MediaQuery.of(context).size.height / 2.5,
       width: MediaQuery.of(context).size.height / 2,
-      decoration: BoxDecoration(
-        color: Theme.of(context).cardColor,
-        boxShadow: const [
-          BoxShadow(
-            blurRadius: 6,
-            offset: Offset(6, 6),
-            color: Colors.black26,
-          ),
-        ],
-        borderRadius: BorderRadius.circular(16),
-      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
