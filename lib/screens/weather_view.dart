@@ -6,6 +6,8 @@ import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 import "package:weather/weather.dart";
 
+import "../components/rounded_icon_w_label.dart";
+
 class WeatherView extends StatefulWidget {
   const WeatherView({super.key, required final GoRouterState goRouterState});
 
@@ -18,6 +20,7 @@ class _WeatherViewState extends State<WeatherView> {
   final Icon weatherIcon = const Icon(Icons.cloud);
   final List<String> entries = <String>["A", "B", "C"];
   WeatherFactory wf = WeatherFactory(const String.fromEnvironment("OPENWKEY"));
+  bool isUpcomingDays = true;
   late Weather w;
   late List<Weather> forecast;
   late List<Weather> nextFiveDays;
@@ -39,13 +42,23 @@ class _WeatherViewState extends State<WeatherView> {
     return weatherByDay.values.toList();
   }
 
-  List<Weather> fetchFiveDays(final List<Weather> data) {
-    return nextFiveDays;
+  Future<List<Weather>> fetchNextFiveHours() async {
+    final List<Weather> data = await wf.fiveDayForecastByCityName("Burnaby");
+    final Map<String, Weather> weatherByHour = {};
+    for (final Weather w in data) {
+      // Only grabs the first weather data for each day at 2 am
+      if (!weatherByHour.containsKey(w.date!.hour.toString())) {
+        weatherByHour[w.date!.hour.toString()] = w;
+      }
+    }
+    return weatherByHour.values.toList();
   }
 
   // Asynchronous method to fetch weather data
   Future<Weather> fetchWeather() async {
-    return await wf.currentWeatherByCityName("Burnaby");
+    final w = await wf.currentWeatherByCityName("Burnaby");
+    print(w);
+    return w;
   }
 
   @override
@@ -60,13 +73,58 @@ class _WeatherViewState extends State<WeatherView> {
             _title(name),
             const SizedBox(height: 32),
             _buildWeatherView(),
+            // Container(
+            //   margin: const EdgeInsets.symmetric(vertical: 10),
+            //   child: Row(
+            //     mainAxisAlignment: MainAxisAlignment.end,
+            //     children: [
+            //       ElevatedButton(
+            //         onPressed: () {
+            //           context.pushNamed("aiSuggest", extra: w);
+            //         },
+            //         style: ElevatedButton.styleFrom(
+            //           backgroundColor: Theme.of(context).primaryColor,
+            //         ),
+            //         child: const Text("CC, any suggestions?"),
+            //       ),
+            //     ],
+            //   ),
+            // ),
             const SizedBox(height: 32),
-            _nextDaysText(),
-            const SizedBox(height: 32),
-            _buildThreeDays(),
+            upcomingSection(),
           ],
         ),
       ),
+    );
+  }
+
+  Column upcomingSection() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            isUpcomingDays ? _nextDaysText() : _nextHoursText(),
+            Container(
+              height: 50,
+              width: 50,
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: TextButton(
+                onPressed: () {
+                  setState(() {
+                    isUpcomingDays = !isUpcomingDays;
+                  });
+                },
+                child: Text(isUpcomingDays ? "H" : "D"),
+              ),
+            ),
+          ],
+        ),
+        _buildUpcomingBox(),
+      ],
     );
   }
 
@@ -87,17 +145,17 @@ class _WeatherViewState extends State<WeatherView> {
         if (snapshot.connectionState == ConnectionState.done) {
           w = snapshot.data!;
           return MainWeatherContainer(
-            degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} °C",
+            // degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} °C",
+            degrees: "${w.temperature?.celsius?.toStringAsFixed(1)}",
             weather: w.weatherDescription.toString().toTitleCase(),
             link: fetchWeatherIcon(w.weatherIcon!),
             w: w,
           );
         } else {
-          // return const Center(child: CircularProgressIndicator());
           return roundedContainer(
             color: Colors.white,
-            height: 200,
-            width: 200,
+            height: MediaQuery.of(context).size.height / 2.5,
+            width: MediaQuery.of(context).size.height / 2,
             child: const Center(
               child: CircularProgressIndicator(),
             ),
@@ -117,13 +175,23 @@ class _WeatherViewState extends State<WeatherView> {
     );
   }
 
-  FutureBuilder<List<Weather>> _buildThreeDays() {
+  Text _nextHoursText() {
+    return const Text(
+      "The Next Few Hours...",
+      style: TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  FutureBuilder<List<Weather>> _buildUpcomingBox() {
     return FutureBuilder(
-      future: fetchNextFiveDays(),
+      future: isUpcomingDays ? fetchNextFiveDays() : fetchNextFiveHours(),
       builder: (final BuildContext context, final AsyncSnapshot<List<Weather>> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           forecast = snapshot.data!;
-          return UpcomingBox(forecast: forecast);
+          return UpcomingBox(forecast: forecast, isUpcomingDays: isUpcomingDays);
         } else {
           return const UpcomingBoxLoading();
         }
@@ -163,9 +231,11 @@ class UpcomingBox extends StatelessWidget {
   const UpcomingBox({
     super.key,
     required this.forecast,
+    required this.isUpcomingDays,
   });
 
   final List<Weather> forecast;
+  final bool isUpcomingDays;
 
   @override
   Widget build(final BuildContext context) {
@@ -198,13 +268,21 @@ class UpcomingBox extends StatelessWidget {
                       fit: BoxFit.cover,
                       height: 32,
                     ),
-                    Text(
-                      "${forecast[index].date?.month}/${forecast[index].date?.day}",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    isUpcomingDays
+                        ? Text(
+                            "${forecast[index].date?.month}/${forecast[index].date?.day}",
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : Text(
+                            "${forecast[index].date?.hour}:00",
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                   ],
                 ),
               );
@@ -238,41 +316,95 @@ class MainWeatherContainer extends StatelessWidget {
     return roundedContainer(
       margin: const EdgeInsets.all(4),
       color: Theme.of(context).cardColor,
+      padding: const EdgeInsets.all(8),
       height: MediaQuery.of(context).size.height / 2.5,
       width: MediaQuery.of(context).size.height / 2,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text(
-            degrees,
+            "${w.temperature?.celsius?.toStringAsFixed(1)}°C",
             style: const TextStyle(
-              fontSize: 24,
+              fontSize: 94,
+              letterSpacing: 0.25,
               fontWeight: FontWeight.bold,
             ),
           ),
-          Image.network(
-            link,
-            fit: BoxFit.cover,
-            height: 64,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                weather,
+                style: const TextStyle(
+                  fontSize: 24,
+                  // fontWeight: FontWeight.,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Image.network(
+                link,
+                fit: BoxFit.cover,
+                height: 32,
+              ),
+            ],
           ),
-          Text(
-            weather,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              context.pushNamed("aiSuggest", extra: w);
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).primaryColor,
-            ),
-            child: const Text("CC, What are my options?"),
+          _miscIcons(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ButtonBar(
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      context.pushNamed("aiSuggest", extra: w);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).primaryColor,
+                    ),
+                    child: const Row(
+                      children: [
+                        Text("Hey CC, got any activities for me?"),
+                        SizedBox(width: 8),
+                        Icon(Icons.chat)
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
+
       ),
     );
+  }
+
+  Row _miscIcons() {
+    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          RoundedIconWLabel(
+            color: Colors.yellow[200],
+            iconData: Icons.wb_sunny,
+            label: "${w.sunrise?.hour}:${w.sunrise?.minute}",
+          ),
+          RoundedIconWLabel(
+            color: Colors.orange[200],
+            iconData: Icons.wb_twighlight,
+            label: "${w.sunset?.hour}:${w.sunset?.minute}",
+          ),
+          RoundedIconWLabel(
+            color: Colors.grey[200],
+            iconData: Icons.wb_cloudy,
+            label: "${w.cloudiness?.toStringAsFixed(0)}%",
+          ),
+          RoundedIconWLabel(
+            color: Colors.blue[200],
+            iconData: Icons.water_drop,
+            label: "${w.humidity?.toStringAsFixed(0)}%",
+          ),
+          RoundedIconWLabel(
+              color: Colors.blueGrey[100],
+              label: "${w.windSpeed}",
+              iconData: Icons.air,),
+        ]);
   }
 }
