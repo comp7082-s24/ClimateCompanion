@@ -15,9 +15,8 @@ class WeatherView extends StatefulWidget {
 class _WeatherViewState extends State<WeatherView> {
   final String degrees = "Weather";
   final Icon weatherIcon = const Icon(Icons.cloud);
-  final String weather = "Cloudy AF";
   final List<String> entries = <String>["A", "B", "C"];
-  WeatherFactory wf = WeatherFactory("587ea169202f172133a2f44d973687f1");
+  WeatherFactory wf = WeatherFactory(const String.fromEnvironment("OPENWKEY"));
   late Weather w;
   late List<Weather> forecast;
   late List<Weather> nextFiveDays;
@@ -86,9 +85,8 @@ class _WeatherViewState extends State<WeatherView> {
           w = snapshot.data!;
           return MainWeatherContainer(
             degrees: "${w.tempFeelsLike?.celsius?.toStringAsFixed(1)} °C",
-            weatherIcon: weatherIcon,
             weather: w.weatherDescription.toString().toTitleCase(),
-            link: "http://openweathermap.org/img/w/${w.weatherIcon}.png",
+            link: fetchWeatherIcon(w.weatherIcon!),
             w: w,
           );
         } else {
@@ -114,7 +112,7 @@ class _WeatherViewState extends State<WeatherView> {
       builder: (final BuildContext context, final AsyncSnapshot<List<Weather>> snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           forecast = snapshot.data!;
-          return UpcomingBox(context: context, forecast: forecast);
+          return UpcomingBox(forecast: forecast);
         } else {
           return const Center(child: CircularProgressIndicator());
         }
@@ -126,11 +124,9 @@ class _WeatherViewState extends State<WeatherView> {
 class UpcomingBox extends StatelessWidget {
   const UpcomingBox({
     super.key,
-    required this.context,
     required this.forecast,
   });
 
-  final BuildContext context;
   final List<Weather> forecast;
 
   @override
@@ -170,7 +166,7 @@ class UpcomingBox extends StatelessWidget {
                       ),
                     ),
                     Image.network(
-                      "http://openweathermap.org/img/w/${forecast[index].weatherIcon}.png",
+                      fetchWeatherIcon(forecast[index].weatherIcon!),
                       fit: BoxFit.cover,
                       height: 32,
                     ),
@@ -199,14 +195,12 @@ class MainWeatherContainer extends StatelessWidget {
   const MainWeatherContainer({
     super.key,
     required this.degrees,
-    required this.weatherIcon,
     required this.weather,
     required this.link,
     required this.w,
   });
 
   final String degrees;
-  final Icon weatherIcon;
   final String weather;
   final String link;
   final Weather w;
