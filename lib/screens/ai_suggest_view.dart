@@ -1,4 +1,5 @@
 // ignore: implementation_imports
+import "package:climate_companion/components/rounded_container.dart";
 import "package:flutter_gemini/src/models/candidates/candidates.dart";
 import "dart:convert";
 import "package:flutter/material.dart";
@@ -6,33 +7,9 @@ import "package:flutter_gemini/flutter_gemini.dart";
 import "package:go_router/go_router.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:weather/weather.dart";
+import "package:climate_companion/models/Activity.dart";
 
 final ValueNotifier<DateTime> dateUpdateRequested = ValueNotifier<DateTime>(DateTime.now());
-
-class ActivityList {
-  final List<Activity> activities;
-
-  ActivityList({required this.activities});
-
-  factory ActivityList.fromJson(final List<dynamic> json) {
-    final List<Activity> activities = json.map((final activity) => Activity.fromJson(activity as Map<String, dynamic>)).toList();
-    return ActivityList(activities: activities);
-  }
-}
-
-class Activity {
-  final String title;
-  final String description;
-
-  Activity({required this.title, required this.description});
-
-  factory Activity.fromJson(final Map<String, dynamic> json) {
-    return Activity(
-      title: json["title"] as String,
-      description: json["description"] as String,
-    );
-  }
-}
 
 class AiSuggestView extends StatefulWidget {
   const AiSuggestView({
@@ -57,14 +34,18 @@ class _AiSuggestViewState extends State<AiSuggestView> {
     super.initState();
     try {
       weather = widget.goRouterState.extra as Weather;
-      final prompt = "Give me a list of 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) when the "
+      final prompt =
+          "Give me a list of 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) when the "
           "weather is "
-          "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
+          "${weather.weatherDescription}. Return the response as a json object containing a title and a description with a max of 50 characters";
 
       fetchCandidatesFuture = Gemini.instance.text(prompt);
 
       fetchCandidatesFuture.then((final value) {
-        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
+        final String jsonString = value?.content?.parts?.first.text
+                ?.replaceFirst("```json\n{", "{")
+                .replaceFirst("}\n```", "}") ??
+            "";
         final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
         final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
 
@@ -96,14 +77,18 @@ class _AiSuggestViewState extends State<AiSuggestView> {
 
   void _reSuggest() {
     setState(() {
-      final prompt = "Give me a list of another 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) "
+      final prompt =
+          "Give me a list of another 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) "
           "when the "
           "weather is "
           "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
       fetchCandidatesFuture = Gemini.instance.text(prompt);
 
       fetchCandidatesFuture.then((final value) {
-        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
+        final String jsonString = value?.content?.parts?.first.text
+                ?.replaceFirst("```json\n{", "{")
+                .replaceFirst("}\n```", "}") ??
+            "";
         final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
         final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
         _activities = ActivityList.fromJson(activityListJson);
@@ -149,48 +134,71 @@ class _AiSuggestViewState extends State<AiSuggestView> {
           children: <Widget>[
             c.output != null
                 ? Text(
-                    "Here are some activities you can do in ${weather.areaName} with the weather being ${weather.temperature}:",
+                    // "Here are some activities you can do in ${weather.areaName} with the weather being ${weather.temperature}:"
+                    "I found some activities you might like, perfect for ${weather.weatherDescription} in ${weather.areaName}!",
                     style: Theme.of(context).textTheme.titleLarge,
                   )
                 : const SizedBox.shrink(),
             const SizedBox(height: 16),
             ..._activities.activities.map(
-              (final activity) => ListTile(
-                title: Text(
-                  activity.title,
-                  style: Theme.of(context).textTheme.labelLarge,
-                ),
-                subtitle: Text(activity.description),
-                trailing: IconButton(
-                  icon: _selected.contains(activity) ? const Icon(Icons.favorite_outlined) : const Icon(Icons.favorite_outline),
-                  onPressed: () async {
-                    await saveFavorite(activity);
-                    if (mounted) {
-                      showDialog<void>(
-                        context: context,
-                        builder: (final BuildContext context) {
-                          return const AlertDialog(
-                            title: Text("Suggestion Saved Successfully."),
-                          );
-                        },
-                      );
-                    }
-                  },
-                ),
-              ),
+              _activitySuggestion,
             ),
             const SizedBox(height: 16),
             Text(
-              "Didn't like the suggestions? Try again!",
+              "Would you like me to come up with something else?",
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
             Center(
-              child: ElevatedButton(onPressed: _reSuggest, child: const Text("Re-Suggest")),
+              child: ElevatedButton(
+                onPressed: _reSuggest,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                child: Text("Re-Suggest", style: Theme.of(context).textTheme.bodyMedium),
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Column _activitySuggestion(final Activity activity) {
+    return Column(
+      children: [
+        roundedContainer(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height / 6.5,
+          color: Theme.of(context).cardColor,
+          child: ListTile(
+            title: Text(
+              activity.title,
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            subtitle: Text(activity.description),
+            trailing: IconButton(
+              icon: _selected.contains(activity)
+                  ? const Icon(Icons.favorite_outlined)
+                  : const Icon(Icons.favorite_outline),
+              onPressed: () async {
+                await saveFavorite(activity);
+                if (mounted) {
+                  showDialog<void>(
+                    context: context,
+                    builder: (final BuildContext context) {
+                      return const AlertDialog(
+                        title: Text("Suggestion Saved Successfully."),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+      ],
     );
   }
 }

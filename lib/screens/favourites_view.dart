@@ -137,7 +137,7 @@ class _FavouritesViewState extends State<FavouritesView> {
                                           ],
                                         ),
                                       ),
-                                      height: MediaQuery.of(context).size.height / 6,
+                                      height: MediaQuery.of(context).size.height / 6.5,
                                       width: MediaQuery.of(context).size.height / 2,
                                       color: Theme.of(context).cardColor,
                                     ),
