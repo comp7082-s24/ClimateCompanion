@@ -5,7 +5,7 @@ import "package:flutter/painting.dart";
 // Used in Weather_View
 Container roundedContainer({
   required final Widget child,
-  required final double height,
+  final double height = double.infinity,
   required final double width,
   required final Color color,
   final EdgeInsets margin = EdgeInsets.zero,

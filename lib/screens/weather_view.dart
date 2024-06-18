@@ -92,7 +92,6 @@ class _WeatherViewState extends State<WeatherView> {
                 isUpcomingDays ? _nextDaysText() : _nextHoursText(),
               ],
             ),
-            // isUpcomingDays ? _nextDaysText() : _nextHoursText(),
             Container(
               height: 50,
               width: 50,
@@ -386,7 +385,7 @@ class MainWeatherContainer extends StatelessWidget {
       children: AnimationConfiguration.toStaggeredList(
         duration: const Duration(milliseconds: 1000),
         childAnimationBuilder: (final widget) => SlideAnimation(
-          horizontalOffset: -50.0,
+          horizontalOffset: -5.0,
           child: FadeInAnimation(
             child: widget,
           ),
