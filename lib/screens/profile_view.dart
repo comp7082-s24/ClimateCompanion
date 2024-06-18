@@ -1,4 +1,5 @@
 import "package:climate_companion/components/delete.profile.button.dart";
+import "package:climate_companion/constants.dart";
 import "package:climate_companion/navigation.dart";
 import "package:climate_companion/state/app_state_provider.dart";
 import "package:flutter/material.dart";
@@ -134,7 +135,7 @@ class _ProfileViewState extends State<ProfileView> {
       style: ElevatedButton.styleFrom(
         backgroundColor: Theme.of(context).primaryColor,
       ),
-      child: Text("Update Profile", style: Theme.of(context).textTheme.bodyMedium),
+      child: Text(Constants.updateProfileButtonTitle, style: Theme.of(context).textTheme.bodyMedium),
     );
   }
 

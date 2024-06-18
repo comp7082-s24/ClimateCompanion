@@ -1,6 +1,8 @@
 import "dart:async";
 import "dart:convert";
 import "package:climate_companion/components/rounded_container.dart";
+import "package:climate_companion/constants.dart";
+import "package:climate_companion/navigation.dart";
 import "package:climate_companion/screens/ai_suggest_view.dart";
 import "package:flutter/material.dart";
 import "package:flutter_staggered_animations/flutter_staggered_animations.dart";
@@ -75,9 +77,9 @@ class _FavouritesViewState extends State<FavouritesView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Favorites",
-              style: TextStyle(
+            Text(
+              FavoritesDestination().title,
+              style: const TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
               ),
@@ -97,7 +99,7 @@ class _FavouritesViewState extends State<FavouritesView> {
                     );
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
-                      child: Text("No favorites yet."),
+                      child: Text(Constants.noFavouritesMessage),
                     );
                   } else {
                     final favorites = snapshot.data!;
@@ -140,8 +142,7 @@ class _FavouritesViewState extends State<FavouritesView> {
                                             ],
                                           ),
                                         ),
-                                        height: MediaQuery.of(context).size.height / 6.5,
-                                        width: MediaQuery.of(context).size.height / 2,
+                                        width: MediaQuery.of(context).size.width,
                                         color: cardColor,
                                       ),
                                       const SizedBox(height: 12),

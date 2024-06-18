@@ -1,3 +1,5 @@
+import "package:climate_companion/constants.dart";
+import "package:climate_companion/navigation.dart";
 import "package:climate_companion/state/app_state_provider.dart";
 import "package:climate_companion/themes/theme.dart";
 import "package:flutter/material.dart";
@@ -40,9 +42,7 @@ class _UpdateProfileViewState extends State<UpdateProfileView> {
     const columSeparator = SizedBox(height: 16);
     const sectionSeparator = SizedBox(height: 32);
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Update Profile"),
-      ),
+      appBar: AppBar(title: Text(UpdateProfileDestination().title)),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -58,7 +58,7 @@ class _UpdateProfileViewState extends State<UpdateProfileView> {
                     child: ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(
-                        "Okay, let's update your profile!",
+                        Constants.updateProfileHeaderMessage,
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
@@ -163,7 +163,7 @@ class _UpdateProfileViewState extends State<UpdateProfileView> {
                         padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(vertical: 16)),
                       ),
                       onPressed: submitForm(context),
-                      child: const Text("Update"),
+                      child: const Text(Constants.updateProfileButtonTitle),
                     ),
                   ),
                 ],

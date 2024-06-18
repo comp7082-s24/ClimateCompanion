@@ -1,5 +1,7 @@
 // ignore: implementation_imports
 import "package:climate_companion/components/rounded_container.dart";
+import "package:climate_companion/constants.dart";
+import "package:climate_companion/navigation.dart";
 import "dart:convert";
 import "package:flutter/material.dart";
 import "package:flutter_gemini/flutter_gemini.dart";
@@ -34,16 +36,17 @@ class _AiSuggestViewState extends State<AiSuggestView> {
     super.initState();
     try {
       weather = widget.goRouterState.extra as Weather;
-      final prompt = "Give me a list of 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) when the "
-          "weather is "
-          "${weather.weatherDescription}. Return the response as a json object containing a title and a description with a max of 50 characters";
+      if (weather.areaName == null || weather.country == null || weather.weatherDescription == null) {
+        fetchCandidatesFuture = Future.error("error");
+        return;
+      }
+
+      final prompt = Constants.prompt(weather.areaName!, weather.country!, weather.weatherDescription!);
 
       fetchCandidatesFuture = Gemini.instance.text(prompt);
 
       fetchCandidatesFuture.then((final value) {
-        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
-        final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
-        final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
+        final List<dynamic> activityListJson = parseJsonFromCandidates(value);
 
         setState(() {
           _activities = ActivityList.fromJson(activityListJson);
@@ -53,6 +56,13 @@ class _AiSuggestViewState extends State<AiSuggestView> {
       fetchCandidatesFuture = Future.error("error");
       _activities = ActivityList(activities: []);
     }
+  }
+
+  List<dynamic> parseJsonFromCandidates(Candidates? value) {
+    final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
+    final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
+    final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
+    return activityListJson;
   }
 
   Future<void> saveFavorite(final Activity activity) async {
@@ -73,17 +83,14 @@ class _AiSuggestViewState extends State<AiSuggestView> {
 
   void _reSuggest() {
     setState(() {
-      final prompt = "Give me a list of another 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) "
-          "when the "
-          "weather is "
-          "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
+      final prompt = Constants.prompt(weather.areaName!, weather.country!, weather.weatherDescription!, isRePrompt: true);
       fetchCandidatesFuture = Gemini.instance.text(prompt);
-
       fetchCandidatesFuture.then((final value) {
-        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
-        final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
-        final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
+        final List<dynamic> activityListJson = parseJsonFromCandidates(value);
         _activities = ActivityList.fromJson(activityListJson);
+      }).catchError((final Object e) {
+        fetchCandidatesFuture = Future.error("error");
+        _activities = ActivityList(activities: []);
       });
     });
   }
@@ -92,7 +99,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
   Widget build(final BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("AI Suggest"),
+        title: Text(AiSuggestDestination().title),
       ),
       body: FutureBuilder(
         future: fetchCandidatesFuture,
@@ -117,6 +124,9 @@ class _AiSuggestViewState extends State<AiSuggestView> {
   }
 
   Widget _buildAiSuggestView(final Candidates c) {
+    if (weather.areaName == null || weather.weatherDescription == null) {
+      return const Text(Constants.aiSuggestErrorMessage);
+    }
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: SingleChildScrollView(
@@ -127,7 +137,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
             c.output != null
                 ? Text(
                     // "Here are some activities you can do in ${weather.areaName} with the weather being ${weather.temperature}:"
-                    "I found some activities you might like, perfect for ${weather.weatherDescription} in ${weather.areaName}!",
+                    Constants.aiSuggestHeaderMessage(weather.areaName!, weather.weatherDescription!),
                     style: Theme.of(context).textTheme.titleLarge,
                   )
                 : const SizedBox.shrink(),
@@ -151,7 +161,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
             ),
             const SizedBox(height: 16),
             Text(
-              "Would you like me to come up with something else?",
+              Constants.aiSuggestRetryMessage,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
@@ -161,7 +171,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Theme.of(context).primaryColor,
                 ),
-                child: Text("Re-Suggest", style: Theme.of(context).textTheme.bodyMedium),
+                child: Text(Constants.reSuggestButtonTitle, style: Theme.of(context).textTheme.bodyMedium),
               ),
             ),
           ],
@@ -187,14 +197,17 @@ class _AiSuggestViewState extends State<AiSuggestView> {
             onPressed: () async {
               await saveFavorite(activity);
               if (mounted) {
-                showDialog<void>(
-                  context: context,
-                  builder: (final BuildContext context) {
-                    return const AlertDialog(
-                      title: Text("Suggestion Saved Successfully."),
-                    );
-                  },
-                );
+                ScaffoldMessenger.of(context)
+                  ..clearSnackBars()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        _selected.contains(activity)
+                            ? Constants.suggestionSavedSnackBarMessage
+                            : Constants.suggestionRemovedSnackBarMessage,
+                      ),
+                    ),
+                  );
               }
             },
           ),

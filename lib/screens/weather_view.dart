@@ -1,4 +1,5 @@
 import "package:climate_companion/components/rounded_container.dart";
+import "package:climate_companion/constants.dart";
 import "package:climate_companion/state/app_state_provider.dart";
 import "package:climate_companion/utils/strings.dart";
 import "package:flutter/material.dart";
@@ -446,7 +447,7 @@ class AiSuggestRow extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Text("Hey CC, got any activities for me?", style: Theme.of(context).textTheme.bodyMedium),
+                  Text(Constants.ccAiSuggestMessage, style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(width: 8),
                   Icon(
                     Icons.chat,

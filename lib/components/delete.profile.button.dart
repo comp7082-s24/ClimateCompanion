@@ -1,3 +1,4 @@
+import "package:climate_companion/constants.dart";
 import "package:flutter/material.dart";
 
 class DeleteProfileButton extends StatelessWidget {
@@ -13,29 +14,31 @@ class DeleteProfileButton extends StatelessWidget {
           context: context,
           builder: (final BuildContext context) {
             return AlertDialog(
-              title: const Text("Delete Profile"),
-              content: const Text("Are you sure you want to delete your profile? This action cannot be undone."),
+              title: const Text(Constants.deleteProfileDialogTitle),
+              content: const Text(Constants.deleteProfileDialogMessage),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Cancel"),
+                  child: const Text(Constants.cancelButtonTitle),
                 ),
                 TextButton(
                   onPressed: () {
                     onPressed();
                     Navigator.of(context).pop();
                   },
-                  child: const Text("Delete"),
+                  child: const Text(Constants.deleteButtonTitle),
                 ),
               ],
             );
           },
         );
       },
-      child: const Text("Delete Profile",
-          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),),
+      child: const Text(
+        Constants.deleteProfileButtonTitle,
+        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }

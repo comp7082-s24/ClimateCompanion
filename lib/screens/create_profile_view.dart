@@ -1,3 +1,4 @@
+import "package:climate_companion/constants.dart";
 import "package:climate_companion/navigation.dart";
 import "package:climate_companion/state/app_state_provider.dart";
 import "package:climate_companion/themes/theme.dart";
@@ -44,7 +45,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: Text(
-                          "Hello and welcome",
+                          Constants.onBoardingWelcomeTitle,
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
@@ -52,10 +53,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                         ),
                         subtitle: Padding(
                           padding: EdgeInsets.only(top: 16),
-                          child: Text(
-                            "Please provide the following information to assist ClimateCompanion in understanding you better "
-                            "and delivering more tailored results",
-                          ),
+                          child: Text(Constants.onBoardingWelcomeMessage),
                         ),
                       ),
                     ),
@@ -155,7 +153,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
                           padding: WidgetStateProperty.all<EdgeInsetsGeometry>(const EdgeInsets.symmetric(vertical: 16)),
                         ),
                         onPressed: submitForm(context),
-                        child: const Text("Save"),
+                        child: const Text(Constants.saveButtonTitle),
                       ),
                     ),
                   ],
@@ -163,7 +161,7 @@ class _CreateProfileViewState extends State<CreateProfileView> {
               ),
             ),
             Text(
-              "Created with ❤️ at BCIT",
+              Constants.createdByMessage,
               style: Theme.of(context).textTheme.titleSmall,
             ),
           ],
