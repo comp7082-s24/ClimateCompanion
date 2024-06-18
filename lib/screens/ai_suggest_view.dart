@@ -126,7 +126,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
 
   Widget _buildAiSuggestView(final Candidates c) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,9 +174,10 @@ class _AiSuggestViewState extends State<AiSuggestView> {
           child: ListTile(
             title: Text(
               activity.title,
-              style: Theme.of(context).textTheme.labelLarge,
+              style: Theme.of(context).textTheme.titleMedium,
             ),
-            subtitle: Text(activity.description),
+            subtitle: Text(activity.description,
+            style: Theme.of(context).textTheme.bodyMedium),
             trailing: IconButton(
               icon: _selected.contains(activity)
                   ? const Icon(Icons.favorite_outlined)
