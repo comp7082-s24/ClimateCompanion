@@ -161,11 +161,11 @@ class _WeatherViewState extends State<WeatherView> {
         fontWeight: FontWeight.bold,
       ),
       incomingEffect: WidgetTransitionEffects(
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 250),
         offset: const Offset(0, -25),
       ),
       outgoingEffect: WidgetTransitionEffects(
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 250),
         offset: const Offset(0, 25),
       ),
     );
@@ -179,11 +179,11 @@ class _WeatherViewState extends State<WeatherView> {
         fontWeight: FontWeight.bold,
       ),
       incomingEffect: WidgetTransitionEffects(
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 250),
         offset: const Offset(0, -25),
       ),
       outgoingEffect: WidgetTransitionEffects(
-        duration: const Duration(milliseconds: 500),
+        duration: const Duration(milliseconds: 250),
         offset: const Offset(0, 25),
       ),
     );
@@ -374,39 +374,24 @@ class MainWeatherContainer extends StatelessWidget {
             ],
           ),
           _miscIcons(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              ButtonBar(
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      context.pushNamed("aiSuggest", extra: w);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColor,
-                    ),
-                    child: Row(
-                      children: [
-                        Text("Hey CC, got any activities for me?",
-                            style: Theme.of(context).textTheme.bodyMedium),
-                        const SizedBox(width: 8),
-                        Icon(Icons.chat, color: Theme.of(context).colorScheme.onPrimaryContainer, )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
+          AiSuggestRow(w: w),
         ],
-
       ),
     );
   }
 
   Row _miscIcons() {
-    return Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: AnimationConfiguration.toStaggeredList(
+        duration: const Duration(milliseconds: 1000),
+        childAnimationBuilder: (final widget) => SlideAnimation(
+          horizontalOffset: -50.0,
+          child: FadeInAnimation(
+            child: widget,
+          ),
+        ),
+        children: [
           RoundedIconWLabel(
             color: Colors.yellow[200],
             iconData: Icons.wb_sunny,
@@ -414,7 +399,7 @@ class MainWeatherContainer extends StatelessWidget {
           ),
           RoundedIconWLabel(
             color: Colors.orange[200],
-            iconData: Icons.wb_twighlight,
+            iconData: Icons.wb_twilight,
             label: "${w.sunset?.hour}:${w.sunset?.minute}",
           ),
           RoundedIconWLabel(
@@ -428,9 +413,53 @@ class MainWeatherContainer extends StatelessWidget {
             label: "${w.humidity?.toStringAsFixed(0)}%",
           ),
           RoundedIconWLabel(
-              color: Colors.blueGrey[100],
-              label: "${w.windSpeed}",
-              iconData: Icons.air,),
-        ]);
+            color: Colors.blueGrey[100],
+            iconData: Icons.air,
+            label: "${w.windSpeed}",
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class AiSuggestRow extends StatelessWidget {
+  const AiSuggestRow({
+    super.key,
+    required this.w,
+  });
+
+  final Weather w;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        ButtonBar(
+          children: [
+            TextButton(
+              onPressed: () {
+                context.pushNamed("aiSuggest", extra: w);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).primaryColor,
+              ),
+              child: Row(
+                children: [
+                  Text("Hey CC, got any activities for me?",
+                      style: Theme.of(context).textTheme.bodyMedium),
+                  const SizedBox(width: 8),
+                  Icon(
+                    Icons.chat,
+                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
