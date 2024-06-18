@@ -67,6 +67,8 @@ class _FavouritesViewState extends State<FavouritesView> {
 
   @override
   Widget build(final BuildContext context) {
+    final cardColor = Theme.of(context).cardColor.withOpacity(0.5);
+
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -140,7 +142,7 @@ class _FavouritesViewState extends State<FavouritesView> {
                                         ),
                                         height: MediaQuery.of(context).size.height / 6.5,
                                         width: MediaQuery.of(context).size.height / 2,
-                                        color: Theme.of(context).cardColor.withOpacity(0.5),
+                                        color: cardColor,
                                       ),
                                       const SizedBox(height: 12),
                                     ],
