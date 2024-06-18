@@ -3,7 +3,7 @@ import "package:flutter/material.dart";
 // Used in Weather_View
 Container roundedContainer({
   required final Widget child,
-  final double height = double.infinity,
+  final double? height,
   required final double width,
   required final Color color,
   final EdgeInsets margin = EdgeInsets.zero,
