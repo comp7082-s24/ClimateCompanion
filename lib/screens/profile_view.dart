@@ -36,7 +36,12 @@ class _ProfileViewState extends State<ProfileView> {
             const SizedBox(height: 16),
             _buildThemes(context),
             _buildDarkLightMode(context),
-            _buildDeleteProfile(context),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                _buildDeleteProfile(context),
+              ],
+            )
           ],
         ),
       ),
@@ -45,7 +50,7 @@ class _ProfileViewState extends State<ProfileView> {
 
   SizedBox _buildDeleteProfile(final BuildContext context) {
     return SizedBox(
-            width: double.infinity,
+            width: MediaQuery.of(context).size.width / 3,
             child: DeleteProfileButton(
               onPressed: () {
                 Provider.of<AppStateProvider>(context, listen: false).resetProfile();

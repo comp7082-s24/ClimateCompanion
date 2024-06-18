@@ -7,7 +7,7 @@ class DeleteProfileButton extends StatelessWidget {
 
   @override
   Widget build(final BuildContext context) {
-    return ElevatedButton(
+    return TextButton(
       onPressed: () {
         showDialog<void>(
           context: context,
@@ -34,10 +34,8 @@ class DeleteProfileButton extends StatelessWidget {
           },
         );
       },
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.white, backgroundColor: Colors.red, // Text color
-      ),
-      child: const Text("Delete Profile"),
+      child: const Text("Delete Profile",
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),),
     );
   }
 }

@@ -102,11 +102,6 @@ ThemeData defaultDarkMode = ThemeData(
   ),
 );
 
-// TODO FRomSEED
-ThemeData defaultDarkModde = ThemeData(
-  colorScheme: ColorScheme.fromSeed(seedColor: Colors.purple),
-  // brightness: Brightness.dark,
-);
 
 ThemeData brownTheme = ThemeData(
   primarySwatch: Colors.brown,

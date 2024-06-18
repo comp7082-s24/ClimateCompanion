@@ -105,7 +105,8 @@ class _WeatherViewState extends State<WeatherView> {
                     isUpcomingDays = !isUpcomingDays;
                   });
                 },
-                child: Text(isUpcomingDays ? "H" : "D"),
+                child: Text(isUpcomingDays ? "H" : "D",
+                style: Theme.of(context).textTheme.bodyMedium),
               ),
             ),
           ],
