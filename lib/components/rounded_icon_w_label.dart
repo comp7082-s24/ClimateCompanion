@@ -1,4 +1,3 @@
-import "package:climate_companion/themes/theme_provider.dart";
 import "package:flutter/material.dart";
 
 class RoundedIconWLabel extends StatelessWidget {

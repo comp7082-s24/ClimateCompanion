@@ -6,7 +6,7 @@ import "package:flutter/material.dart";
 import "package:flutter_staggered_animations/flutter_staggered_animations.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:go_router/go_router.dart";
-import "package:climate_companion/models/FavouriteActivity.dart";
+import "package:climate_companion/models/favourite_activity.dart";
 
 class FavoritesManager {
   static const String _favoritesKey = "favorites";
@@ -14,9 +14,7 @@ class FavoritesManager {
   Future<List<FavoriteActivity>> getFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     final List<String> favoriteActivities = prefs.getStringList(_favoritesKey) ?? [];
-    return favoriteActivities
-        .map((final e) => FavoriteActivity.fromJson(jsonDecode(e) as Map<String, dynamic>))
-        .toList();
+    return favoriteActivities.map((final e) => FavoriteActivity.fromJson(jsonDecode(e) as Map<String, dynamic>)).toList();
   }
 }
 
@@ -55,7 +53,8 @@ class _FavouritesViewState extends State<FavouritesView> {
   }
 
   Map<String, List<FavoriteActivity>> _groupFavoritesByWeather(
-      final List<FavoriteActivity> favorites) {
+    final List<FavoriteActivity> favorites,
+  ) {
     final Map<String, List<FavoriteActivity>> groupedFavorites = {};
     for (final activity in favorites) {
       if (!groupedFavorites.containsKey(activity.weatherDescription)) {
@@ -120,30 +119,32 @@ class _FavouritesViewState extends State<FavouritesView> {
                                 ),
                                 children: entry.value.map((final activity) {
                                   return Column(
-                                    children: [roundedContainer(
-                                      child: Container(
-                                        padding: const EdgeInsets.all(12),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              activity.title,
-                                              style: const TextStyle(fontSize: 20),
-                                            ),
-                                            Text(activity.description,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 2,
-                                            ),
-                                          ],
+                                    children: [
+                                      roundedContainer(
+                                        child: Container(
+                                          padding: const EdgeInsets.all(12),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                activity.title,
+                                                style: const TextStyle(fontSize: 20),
+                                              ),
+                                              Text(
+                                                activity.description,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                              ),
+                                            ],
+                                          ),
                                         ),
+                                        height: MediaQuery.of(context).size.height / 6.5,
+                                        width: MediaQuery.of(context).size.height / 2,
+                                        color: Theme.of(context).cardColor.withOpacity(0.5),
                                       ),
-                                      height: MediaQuery.of(context).size.height / 6.5,
-                                      width: MediaQuery.of(context).size.height / 2,
-                                      color: Theme.of(context).cardColor.withOpacity(0.5),
-                                    ),
-                                    const SizedBox(height: 12),
-
-                                  ],);
+                                      const SizedBox(height: 12),
+                                    ],
+                                  );
                                 }).toList(),
                               ),
                             ),

@@ -1,14 +1,12 @@
 // ignore: implementation_imports
 import "package:climate_companion/components/rounded_container.dart";
-import "package:flutter_gemini/src/models/candidates/candidates.dart";
 import "dart:convert";
 import "package:flutter/material.dart";
 import "package:flutter_gemini/flutter_gemini.dart";
-import "package:flutter_staggered_animations/flutter_staggered_animations.dart";
 import "package:go_router/go_router.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:weather/weather.dart";
-import "package:climate_companion/models/Activity.dart";
+import "package:climate_companion/models/acitivty_list.dart";
 
 final ValueNotifier<DateTime> dateUpdateRequested = ValueNotifier<DateTime>(DateTime.now());
 
@@ -35,18 +33,14 @@ class _AiSuggestViewState extends State<AiSuggestView> {
     super.initState();
     try {
       weather = widget.goRouterState.extra as Weather;
-      final prompt =
-          "Give me a list of 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) when the "
+      final prompt = "Give me a list of 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) when the "
           "weather is "
           "${weather.weatherDescription}. Return the response as a json object containing a title and a description with a max of 50 characters";
 
       fetchCandidatesFuture = Gemini.instance.text(prompt);
 
       fetchCandidatesFuture.then((final value) {
-        final String jsonString = value?.content?.parts?.first.text
-                ?.replaceFirst("```json\n{", "{")
-                .replaceFirst("}\n```", "}") ??
-            "";
+        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
         final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
         final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
 
@@ -78,18 +72,14 @@ class _AiSuggestViewState extends State<AiSuggestView> {
 
   void _reSuggest() {
     setState(() {
-      final prompt =
-          "Give me a list of another 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) "
+      final prompt = "Give me a list of another 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) "
           "when the "
           "weather is "
           "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
       fetchCandidatesFuture = Gemini.instance.text(prompt);
 
       fetchCandidatesFuture.then((final value) {
-        final String jsonString = value?.content?.parts?.first.text
-                ?.replaceFirst("```json\n{", "{")
-                .replaceFirst("}\n```", "}") ??
-            "";
+        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
         final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
         final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
         _activities = ActivityList.fromJson(activityListJson);
@@ -192,9 +182,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
             ),
             subtitle: Text(activity.description, style: Theme.of(context).textTheme.bodyMedium),
             trailing: IconButton(
-              icon: _selected.contains(activity)
-                  ? const Icon(Icons.favorite_outlined)
-                  : const Icon(Icons.favorite_outline),
+              icon: _selected.contains(activity) ? const Icon(Icons.favorite_outlined) : const Icon(Icons.favorite_outline),
               onPressed: () async {
                 await saveFavorite(activity);
                 if (mounted) {

@@ -41,7 +41,7 @@ class _ProfileViewState extends State<ProfileView> {
               children: [
                 _buildDeleteProfile(context),
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -50,14 +50,14 @@ class _ProfileViewState extends State<ProfileView> {
 
   SizedBox _buildDeleteProfile(final BuildContext context) {
     return SizedBox(
-            width: MediaQuery.of(context).size.width / 3,
-            child: DeleteProfileButton(
-              onPressed: () {
-                Provider.of<AppStateProvider>(context, listen: false).resetProfile();
-                context.replaceNamed(CreateProfileDestination().name!);
-              },
-            ),
-          );
+      width: MediaQuery.of(context).size.width / 3,
+      child: DeleteProfileButton(
+        onPressed: () {
+          Provider.of<AppStateProvider>(context, listen: false).resetProfile();
+          context.replaceNamed(CreateProfileDestination().name!);
+        },
+      ),
+    );
   }
 
   Row _buildDarkLightMode(final BuildContext context) {
@@ -70,9 +70,7 @@ class _ProfileViewState extends State<ProfileView> {
           ],
         ),
         IconButton(
-          icon: _isDarkMode
-              ? const Icon(Icons.toggle_on_rounded, size: 40)
-              : const Icon(Icons.toggle_off_rounded, size: 40),
+          icon: _isDarkMode ? const Icon(Icons.toggle_on_rounded, size: 40) : const Icon(Icons.toggle_off_rounded, size: 40),
           onPressed: () {
             Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
             setState(() {
@@ -108,7 +106,7 @@ class _ProfileViewState extends State<ProfileView> {
               onPressed: () {
                 Provider.of<ThemeProvider>(context, listen: false).switchToRedTheme();
               },
-              icon: Icon(Icons.favorite, color: const Color.fromARGB(255, 231, 180, 179)),
+              icon: const Icon(Icons.favorite, color: Color.fromARGB(255, 231, 180, 179)),
             ),
             IconButton(
               onPressed: () {
@@ -146,8 +144,7 @@ class _ProfileViewState extends State<ProfileView> {
         CircleAvatar(
           backgroundColor: Colors.brown.shade800,
           radius: 50,
-          child: Text(name.characters.firstOrNull ?? "?",
-              style: const TextStyle(fontSize: 24, color: Colors.white)),
+          child: Text(name.characters.firstOrNull ?? "?", style: const TextStyle(fontSize: 24, color: Colors.white)),
         ),
         const SizedBox(height: 16),
         Text(

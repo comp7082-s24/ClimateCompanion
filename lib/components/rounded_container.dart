@@ -1,6 +1,4 @@
-import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:flutter/painting.dart";
 
 // Used in Weather_View
 Container roundedContainer({
@@ -10,7 +8,6 @@ Container roundedContainer({
   required final Color color,
   final EdgeInsets margin = EdgeInsets.zero,
   final EdgeInsets padding = EdgeInsets.zero,
-
 }) {
   return Container(
     decoration: BoxDecoration(
@@ -27,6 +24,6 @@ Container roundedContainer({
     padding: padding,
     height: height,
     width: width,
-    child: child
+    child: child,
   );
 }

@@ -7,7 +7,7 @@ import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 import "package:weather/weather.dart";
 import "package:widget_and_text_animator/widget_and_text_animator.dart";
-import "../components/rounded_icon_w_label.dart";
+import "package:climate_companion/components/rounded_icon_w_label.dart";
 
 class WeatherView extends StatefulWidget {
   const WeatherView({super.key, required final GoRouterState goRouterState});
@@ -105,8 +105,7 @@ class _WeatherViewState extends State<WeatherView> {
                     isUpcomingDays = !isUpcomingDays;
                   });
                 },
-                child: Text(isUpcomingDays ? "H" : "D",
-                style: Theme.of(context).textTheme.bodyMedium),
+                child: Text(isUpcomingDays ? "H" : "D", style: Theme.of(context).textTheme.bodyMedium),
               ),
             ),
           ],
@@ -432,7 +431,7 @@ class AiSuggestRow extends StatelessWidget {
   final Weather w;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
@@ -447,13 +446,12 @@ class AiSuggestRow extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Text("Hey CC, got any activities for me?",
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text("Hey CC, got any activities for me?", style: Theme.of(context).textTheme.bodyMedium),
                   const SizedBox(width: 8),
                   Icon(
                     Icons.chat,
                     color: Theme.of(context).colorScheme.onPrimaryContainer,
-                  )
+                  ),
                 ],
               ),
             ),
