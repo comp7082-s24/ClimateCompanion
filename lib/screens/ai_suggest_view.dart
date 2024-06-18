@@ -4,6 +4,7 @@ import "package:flutter_gemini/src/models/candidates/candidates.dart";
 import "dart:convert";
 import "package:flutter/material.dart";
 import "package:flutter_gemini/flutter_gemini.dart";
+import "package:flutter_staggered_animations/flutter_staggered_animations.dart";
 import "package:go_router/go_router.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:weather/weather.dart";
@@ -140,8 +141,21 @@ class _AiSuggestViewState extends State<AiSuggestView> {
                   )
                 : const SizedBox.shrink(),
             const SizedBox(height: 16),
+            // ListView(
+            //   children: AnimationConfiguration.toStaggeredList(
+            //     duration: const Duration(milliseconds: 375),
+            //     childAnimationBuilder: (final widget) => SlideAnimation(
+            //       horizontalOffset: 50.0,
+            //       child: FadeInAnimation(
+            //         child: widget,
+            //       ),
+            //     ),
+            //     children: [
             ..._activities.activities.map(
               _activitySuggestion,
+              // ),
+              // ],
+              // ),
             ),
             const SizedBox(height: 16),
             Text(
@@ -168,16 +182,15 @@ class _AiSuggestViewState extends State<AiSuggestView> {
     return Column(
       children: [
         roundedContainer(
-          width: double.infinity,
+          width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height / 6.5,
-          color: Theme.of(context).cardColor,
+          color: Theme.of(context).cardColor.withOpacity(0.5),
           child: ListTile(
             title: Text(
               activity.title,
               style: Theme.of(context).textTheme.titleMedium,
             ),
-            subtitle: Text(activity.description,
-            style: Theme.of(context).textTheme.bodyMedium),
+            subtitle: Text(activity.description, style: Theme.of(context).textTheme.bodyMedium),
             trailing: IconButton(
               icon: _selected.contains(activity)
                   ? const Icon(Icons.favorite_outlined)
