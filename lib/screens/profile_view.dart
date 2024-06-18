@@ -59,27 +59,34 @@ class _ProfileViewState extends State<ProfileView> {
                       Text("Themes: ", style: TextStyle(fontSize: 16)),
                     ],
                   ),
-                  Row(
-                    children: <Widget>[
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.bookmark,
-                          color: Colors.brown.shade400,
-                        ),
+                  Row(children: <Widget>[
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<ThemeProvider>(context, listen: false).switchToBrownTheme();
+                      },
+                      icon: Icon(
+                        Icons.bookmark,
+                        color: Colors.brown.shade400,
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.favorite, color: Colors.red.shade400),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.cloudy_snowing, color: Colors.blue.shade800),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.forest, color: Colors.green.shade800),
-                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<ThemeProvider>(context, listen: false).switchToRedTheme();
+                      },
+                      icon: Icon(Icons.favorite, color: const Color.fromARGB(255, 231, 180, 179)),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<ThemeProvider>(context, listen: false).switchToBlueTheme();
+                      },
+                      icon: Icon(Icons.cloudy_snowing, color: Colors.blue.shade800),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<ThemeProvider>(context, listen: false).switchToGreenTheme();
+                      },
+                      icon: Icon(Icons.forest, color: Colors.green.shade800),
+                    ),
                     ],
                   ),
                 ],
