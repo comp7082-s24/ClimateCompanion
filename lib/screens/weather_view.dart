@@ -2,10 +2,11 @@ import "package:climate_companion/components/rounded_container.dart";
 import "package:climate_companion/state/app_state_provider.dart";
 import "package:climate_companion/utils/strings.dart";
 import "package:flutter/material.dart";
+import "package:flutter_staggered_animations/flutter_staggered_animations.dart";
 import "package:go_router/go_router.dart";
 import "package:provider/provider.dart";
 import "package:weather/weather.dart";
-
+import "package:widget_and_text_animator/widget_and_text_animator.dart";
 import "../components/rounded_icon_w_label.dart";
 
 class WeatherView extends StatefulWidget {
@@ -18,7 +19,6 @@ class WeatherView extends StatefulWidget {
 class _WeatherViewState extends State<WeatherView> {
   final String degrees = "Weather";
   final Icon weatherIcon = const Icon(Icons.cloud);
-  final List<String> entries = <String>["A", "B", "C"];
   WeatherFactory wf = WeatherFactory(const String.fromEnvironment("OPENWKEY"));
   bool isUpcomingDays = true;
   late Weather w;
@@ -57,7 +57,6 @@ class _WeatherViewState extends State<WeatherView> {
   // Asynchronous method to fetch weather data
   Future<Weather> fetchWeather() async {
     final w = await wf.currentWeatherByCityName("Burnaby");
-    print(w);
     return w;
   }
 
@@ -73,23 +72,6 @@ class _WeatherViewState extends State<WeatherView> {
             _title(name),
             const SizedBox(height: 32),
             _buildWeatherView(),
-            // Container(
-            //   margin: const EdgeInsets.symmetric(vertical: 10),
-            //   child: Row(
-            //     mainAxisAlignment: MainAxisAlignment.end,
-            //     children: [
-            //       ElevatedButton(
-            //         onPressed: () {
-            //           context.pushNamed("aiSuggest", extra: w);
-            //         },
-            //         style: ElevatedButton.styleFrom(
-            //           backgroundColor: Theme.of(context).primaryColor,
-            //         ),
-            //         child: const Text("CC, any suggestions?"),
-            //       ),
-            //     ],
-            //   ),
-            // ),
             const SizedBox(height: 32),
             upcomingSection(),
           ],
@@ -104,7 +86,13 @@ class _WeatherViewState extends State<WeatherView> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            isUpcomingDays ? _nextDaysText() : _nextHoursText(),
+            Row(
+              children: [
+                _nextText(),
+                isUpcomingDays ? _nextDaysText() : _nextHoursText(),
+              ],
+            ),
+            // isUpcomingDays ? _nextDaysText() : _nextHoursText(),
             Container(
               height: 50,
               width: 50,
@@ -153,7 +141,7 @@ class _WeatherViewState extends State<WeatherView> {
           );
         } else {
           return roundedContainer(
-            color: Colors.white,
+            color: Theme.of(context).cardColor,
             height: MediaQuery.of(context).size.height / 2.5,
             width: MediaQuery.of(context).size.height / 2,
             child: const Center(
@@ -165,19 +153,45 @@ class _WeatherViewState extends State<WeatherView> {
     );
   }
 
-  Text _nextDaysText() {
-    return const Text(
-      "The Next Few Days...",
-      style: TextStyle(
+  TextAnimator _nextDaysText() {
+    return TextAnimator(
+      "Days",
+      style: const TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
+      ),
+      incomingEffect: WidgetTransitionEffects(
+        duration: const Duration(milliseconds: 500),
+        offset: const Offset(0, -25),
+      ),
+      outgoingEffect: WidgetTransitionEffects(
+        duration: const Duration(milliseconds: 500),
+        offset: const Offset(0, 25),
       ),
     );
   }
 
-  Text _nextHoursText() {
+  TextAnimator _nextHoursText() {
+    return TextAnimator(
+      "Hours",
+      style: const TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.bold,
+      ),
+      incomingEffect: WidgetTransitionEffects(
+        duration: const Duration(milliseconds: 500),
+        offset: const Offset(0, -25),
+      ),
+      outgoingEffect: WidgetTransitionEffects(
+        duration: const Duration(milliseconds: 500),
+        offset: const Offset(0, 25),
+      ),
+    );
+  }
+
+  Text _nextText() {
     return const Text(
-      "The Next Few Hours...",
+      "The Next Few ",
       style: TextStyle(
         fontSize: 24,
         fontWeight: FontWeight.bold,
@@ -241,57 +255,68 @@ class UpcomingBox extends StatelessWidget {
   Widget build(final BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height / 6,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.all(8),
-        itemCount: 5,
-        itemBuilder: (final BuildContext context, final int index) {
-          return Builder(
-            // Created a builder to fetch the latest theme
-            builder: (final context) {
-              return roundedContainer(
-                color: Theme.of(context).cardColor,
-                height: MediaQuery.of(context).size.height / 6,
-                width: MediaQuery.of(context).size.width / 4,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      "${forecast[index].tempFeelsLike!.celsius!.toStringAsFixed(1)}°C",
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Image.network(
-                      fetchWeatherIcon(forecast[index].weatherIcon!),
-                      fit: BoxFit.cover,
-                      height: 32,
-                    ),
-                    isUpcomingDays
-                        ? Text(
-                            "${forecast[index].date?.month}/${forecast[index].date?.day}",
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+      child: AnimationLimiter(
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.all(8),
+          itemCount: 5,
+          itemBuilder: (final BuildContext context, final int index) {
+            return AnimationConfiguration.staggeredList(
+              position: index,
+              child: SlideAnimation(
+                horizontalOffset: 50,
+                child: FadeInAnimation(
+                  duration: const Duration(milliseconds: 1500),
+                  child: Builder(
+                    // Created a builder to fetch the latest theme
+                    builder: (final context) {
+                      return roundedContainer(
+                        color: Theme.of(context).cardColor,
+                        height: MediaQuery.of(context).size.height / 6,
+                        width: MediaQuery.of(context).size.width / 4,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Text(
+                              "${forecast[index].tempFeelsLike!.celsius!.toStringAsFixed(1)}°C",
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          )
-                        : Text(
-                            "${forecast[index].date?.hour}:00",
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
+                            Image.network(
+                              fetchWeatherIcon(forecast[index].weatherIcon!),
+                              fit: BoxFit.cover,
+                              height: 32,
                             ),
-                          ),
-                  ],
+                            isUpcomingDays
+                                ? Text(
+                                    "${forecast[index].date?.month}/${forecast[index].date?.day}",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  )
+                                : Text(
+                                    "${forecast[index].date?.hour}:00",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              );
-            },
-          );
-        },
-        separatorBuilder: (final BuildContext context, final int index) {
-          return SizedBox(width: MediaQuery.of(context).size.width / 18);
-        },
+              ),
+            );
+          },
+          separatorBuilder: (final BuildContext context, final int index) {
+            return SizedBox(width: MediaQuery.of(context).size.width / 18);
+          },
+        ),
       ),
     );
   }
@@ -361,11 +386,12 @@ class MainWeatherContainer extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).primaryColor,
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        Text("Hey CC, got any activities for me?"),
-                        SizedBox(width: 8),
-                        Icon(Icons.chat)
+                        Text("Hey CC, got any activities for me?",
+                            style: Theme.of(context).textTheme.bodyMedium),
+                        const SizedBox(width: 8),
+                        Icon(Icons.chat, color: Theme.of(context).colorScheme.onPrimaryContainer, )
                       ],
                     ),
                   ),

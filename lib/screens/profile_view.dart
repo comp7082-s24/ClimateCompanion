@@ -26,88 +26,100 @@ class _ProfileViewState extends State<ProfileView> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          CircleAvatar(
-            backgroundColor: Colors.brown.shade800,
-            radius: 50,
-            child: Text(name.characters.firstOrNull ?? "?", style: const TextStyle(fontSize: 24, color: Colors.white)),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            name,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              context.pushNamed(UpdateProfileDestination().name!);
-            },
-            child: const Text("Update Profile", style: TextStyle(fontSize: 16)),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Column(
             children: <Widget>[
-              const Row(
+              CircleAvatar(
+                backgroundColor: Colors.brown.shade800,
+                radius: 50,
+                child: Text(name.characters.firstOrNull ?? "?", style: const TextStyle(fontSize: 24, color: Colors.white)),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  context.pushNamed(UpdateProfileDestination().name!);
+                },
+                child: const Text("Update Profile", style: TextStyle(fontSize: 16)),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  Text("Themes: ", style: TextStyle(fontSize: 16)),
+                  const Row(
+                    children: <Widget>[
+                      Text("Themes: ", style: TextStyle(fontSize: 16)),
+                    ],
+                  ),
+                  Row(children: <Widget>[
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<ThemeProvider>(context, listen: false).switchToBrownTheme();
+                      },
+                      icon: Icon(
+                        Icons.bookmark,
+                        color: Colors.brown.shade400,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<ThemeProvider>(context, listen: false).switchToRedTheme();
+                      },
+                      icon: Icon(Icons.favorite, color: const Color.fromARGB(255, 231, 180, 179)),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<ThemeProvider>(context, listen: false).switchToBlueTheme();
+                      },
+                      icon: Icon(Icons.cloudy_snowing, color: Colors.blue.shade800),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Provider.of<ThemeProvider>(context, listen: false).switchToGreenTheme();
+                      },
+                      icon: Icon(Icons.forest, color: Colors.green.shade800),
+                    ),
+                    ],
+                  ),
                 ],
               ),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.bookmark,
-                      color: Colors.brown.shade400,
-                    ),
+                  const Row(
+                    children: <Widget>[
+                      Text("Dark/Light Mode: ", style: TextStyle(fontSize: 16)),
+                    ],
                   ),
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.favorite, color: Colors.red.shade400),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.cloudy_snowing, color: Colors.blue.shade800),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.forest, color: Colors.green.shade800),
+                    icon: _isDarkMode ? const Icon(Icons.toggle_on_rounded, size: 40) : const Icon(Icons.toggle_off_rounded, size: 40),
+                    onPressed: () {
+                      Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+                      setState(() {
+                        _isDarkMode = !_isDarkMode;
+                      });
+                    },
                   ),
                 ],
               ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: <Widget>[
-              const Row(
-                children: <Widget>[
-                  Text("Dark/Light Mode: ", style: TextStyle(fontSize: 16)),
-                ],
-              ),
-              IconButton(
-                icon: _isDarkMode ? const Icon(Icons.toggle_on_rounded, size: 40) : const Icon(Icons.toggle_off_rounded, size: 40),
-                onPressed: () {
-                  Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-                  setState(() {
-                    _isDarkMode = !_isDarkMode;
-                  });
-                },
+              SizedBox(
+                width: double.infinity,
+                child: DeleteProfileButton(
+                  onPressed: () {
+                    Provider.of<AppStateProvider>(context, listen: false).resetProfile();
+                    context.replaceNamed(CreateProfileDestination().name!);
+                  },
+                ),
               ),
             ],
-          ),
-          SizedBox(
-            width: double.infinity,
-            child: DeleteProfileButton(
-              onPressed: () {
-                Provider.of<AppStateProvider>(context, listen: false).resetProfile();
-                context.replaceNamed(CreateProfileDestination().name!);
-              },
-            ),
           ),
         ],
       ),

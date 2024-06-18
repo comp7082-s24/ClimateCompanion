@@ -19,4 +19,25 @@ class ThemeProvider extends ChangeNotifier {
         _themeData == defaultLightMode ? defaultDarkMode : defaultLightMode;
     notifyListeners();
   }
+
+void switchToBrownTheme() {
+    _themeData = brownTheme;
+    notifyListeners();
+  }
+
+  void switchToRedTheme() {
+    _themeData = redTheme;
+    notifyListeners();
+  }
+
+  void switchToBlueTheme() {
+    _themeData = blueTheme;
+    notifyListeners();
+  }
+
+  void switchToGreenTheme() {
+    _themeData = greenTheme;
+    notifyListeners();
+  }
+
 }
