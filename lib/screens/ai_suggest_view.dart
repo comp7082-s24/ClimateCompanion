@@ -58,7 +58,7 @@ class _AiSuggestViewState extends State<AiSuggestView> {
     }
   }
 
-  List<dynamic> parseJsonFromCandidates(Candidates? value) {
+  List<dynamic> parseJsonFromCandidates(final Candidates? value) {
     final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
     final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
     final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;

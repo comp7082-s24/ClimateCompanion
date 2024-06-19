@@ -1,5 +1,6 @@
 import "dart:async";
 import "dart:convert";
+import "package:climate_companion/components/page_header.dart";
 import "package:climate_companion/components/rounded_container.dart";
 import "package:climate_companion/constants.dart";
 import "package:climate_companion/navigation.dart";
@@ -70,20 +71,13 @@ class _FavouritesViewState extends State<FavouritesView> {
   @override
   Widget build(final BuildContext context) {
     final cardColor = Theme.of(context).cardColor.withOpacity(0.5);
-
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              FavoritesDestination().title,
-              style: const TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            PageHeader(title: FavoritesDestination().title),
             SizedBox(
               height: MediaQuery.of(context).size.height,
               child: FutureBuilder<List<FavoriteActivity>>(
@@ -132,7 +126,6 @@ class _FavouritesViewState extends State<FavouritesView> {
                                             children: [
                                               Text(
                                                 activity.title,
-                                                style: const TextStyle(fontSize: 20),
                                               ),
                                               Text(
                                                 activity.description,

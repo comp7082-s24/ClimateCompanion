@@ -10,8 +10,8 @@ class RoundedIconWLabel extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     return Container(
-      height: 50,
-      width: 50,
+      height: 70,
+      width: 70,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(50),
@@ -21,16 +21,12 @@ class RoundedIconWLabel extends StatelessWidget {
         children: [
           Icon(
             iconData,
-            color: Colors.white,
+            color: Theme.of(context).colorScheme.secondary,
           ),
           Text(
             label,
             softWrap: true,
-            style: const TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: Colors.black38,
-            ),
+            style: Theme.of(context).primaryTextTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.secondary),
           ),
         ],
       ),

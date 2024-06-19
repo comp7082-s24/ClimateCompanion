@@ -1,3 +1,4 @@
+import "package:climate_companion/components/page_header.dart";
 import "package:climate_companion/components/rounded_container.dart";
 import "package:climate_companion/constants.dart";
 import "package:climate_companion/state/app_state_provider.dart";
@@ -70,7 +71,7 @@ class _WeatherViewState extends State<WeatherView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            _title(name),
+            PageHeader(title: "Greetings $name!"),
             const SizedBox(height: 32),
             _buildWeatherView(),
             const SizedBox(height: 32),
@@ -116,16 +117,6 @@ class _WeatherViewState extends State<WeatherView> {
     );
   }
 
-  Text _title(final String name) {
-    return Text(
-      "Greetings $name!",
-      style: const TextStyle(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
   FutureBuilder<Weather> _buildWeatherView() {
     return FutureBuilder(
       future: fetchWeather(),
@@ -155,11 +146,9 @@ class _WeatherViewState extends State<WeatherView> {
 
   TextAnimator _nextDaysText() {
     return TextAnimator(
+      key: ValueKey(Theme.of(context).hashCode),
       "Days",
-      style: const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-      ),
+      style: Theme.of(context).primaryTextTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
       incomingEffect: WidgetTransitionEffects(
         duration: const Duration(milliseconds: 250),
         offset: const Offset(0, -25),
@@ -173,11 +162,9 @@ class _WeatherViewState extends State<WeatherView> {
 
   TextAnimator _nextHoursText() {
     return TextAnimator(
+      key: ValueKey(Theme.of(context).hashCode),
       "Hours",
-      style: const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-      ),
+      style: Theme.of(context).primaryTextTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
       incomingEffect: WidgetTransitionEffects(
         duration: const Duration(milliseconds: 250),
         offset: const Offset(0, -25),
@@ -190,12 +177,9 @@ class _WeatherViewState extends State<WeatherView> {
   }
 
   Text _nextText() {
-    return const Text(
+    return Text(
       "The Next Few ",
-      style: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-      ),
+      style: Theme.of(context).primaryTextTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
     );
   }
 
@@ -279,10 +263,7 @@ class UpcomingBox extends StatelessWidget {
                           children: [
                             Text(
                               "${forecast[index].tempFeelsLike!.celsius!.toStringAsFixed(1)}°C",
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).primaryTextTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             Image.network(
                               fetchWeatherIcon(forecast[index].weatherIcon!),
@@ -292,17 +273,11 @@ class UpcomingBox extends StatelessWidget {
                             isUpcomingDays
                                 ? Text(
                                     "${forecast[index].date?.month}/${forecast[index].date?.day}",
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context).primaryTextTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                                   )
                                 : Text(
                                     "${forecast[index].date?.hour}:00",
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: Theme.of(context).primaryTextTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
                                   ),
                           ],
                         ),
@@ -349,22 +324,16 @@ class MainWeatherContainer extends StatelessWidget {
         children: [
           Text(
             "${w.temperature?.celsius?.toStringAsFixed(1)}°C",
-            style: const TextStyle(
-              fontSize: 94,
-              letterSpacing: 0.25,
-              fontWeight: FontWeight.bold,
-            ),
+            style: Theme.of(context).primaryTextTheme.titleLarge?.copyWith(
+                  fontSize: 94,
+                  letterSpacing: 0.25,
+                  fontWeight: FontWeight.bold,
+                ),
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text(
-                weather,
-                style: const TextStyle(
-                  fontSize: 24,
-                  // fontWeight: FontWeight.,
-                ),
-              ),
+              Text(weather, style: Theme.of(context).primaryTextTheme.titleLarge),
               const SizedBox(width: 16),
               Image.network(
                 link,
@@ -451,7 +420,7 @@ class AiSuggestRow extends StatelessWidget {
                   const SizedBox(width: 8),
                   Icon(
                     Icons.chat,
-                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                    color: Theme.of(context).colorScheme.onPrimary,
                   ),
                 ],
               ),

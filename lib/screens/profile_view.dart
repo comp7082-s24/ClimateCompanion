@@ -27,36 +27,26 @@ class _ProfileViewState extends State<ProfileView> {
     return Container(
       height: MediaQuery.of(context).size.height,
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _buildAvatarAndName(name),
-            const SizedBox(height: 16),
-            _buildUpdateProfile(context),
-            const SizedBox(height: 16),
-            _buildThemes(context),
-            _buildDarkLightMode(context),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                _buildDeleteProfile(context),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  SizedBox _buildDeleteProfile(final BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width / 3,
-      child: DeleteProfileButton(
-        onPressed: () {
-          Provider.of<AppStateProvider>(context, listen: false).resetProfile();
-          context.replaceNamed(CreateProfileDestination().name!);
-        },
+      child: Column(
+        children: <Widget>[
+          _buildAvatarAndName(name),
+          const SizedBox(height: 16),
+          _buildUpdateProfile(context),
+          const SizedBox(height: 16),
+          _buildThemes(context),
+          _buildDarkLightMode(context),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              DeleteProfileButton(
+                onPressed: () {
+                  Provider.of<AppStateProvider>(context, listen: false).resetProfile();
+                  context.replaceNamed(CreateProfileDestination().name!);
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -65,9 +55,9 @@ class _ProfileViewState extends State<ProfileView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Row(
+        Row(
           children: <Widget>[
-            Text("Dark/Light Mode: ", style: TextStyle(fontSize: 16)),
+            Text("Dark/Light Mode: ", style: Theme.of(context).primaryTextTheme.bodyLarge),
           ],
         ),
         IconButton(
@@ -87,9 +77,9 @@ class _ProfileViewState extends State<ProfileView> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        const Row(
+        Row(
           children: <Widget>[
-            Text("Themes: ", style: TextStyle(fontSize: 16)),
+            Text("Themes: ", style: Theme.of(context).primaryTextTheme.bodyLarge),
           ],
         ),
         Row(
@@ -145,15 +135,12 @@ class _ProfileViewState extends State<ProfileView> {
         CircleAvatar(
           backgroundColor: Colors.brown.shade800,
           radius: 50,
-          child: Text(name.characters.firstOrNull ?? "?", style: const TextStyle(fontSize: 24, color: Colors.white)),
+          child: Text(name.characters.firstOrNull ?? "?", style: Theme.of(context).primaryTextTheme.titleLarge),
         ),
         const SizedBox(height: 16),
         Text(
           name,
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
+          style: Theme.of(context).primaryTextTheme.titleLarge,
         ),
       ],
     );

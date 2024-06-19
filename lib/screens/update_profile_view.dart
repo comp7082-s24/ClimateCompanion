@@ -41,6 +41,7 @@ class _UpdateProfileViewState extends State<UpdateProfileView> {
   Widget build(final BuildContext context) {
     const columSeparator = SizedBox(height: 16);
     const sectionSeparator = SizedBox(height: 32);
+    final textFieldTitleStyle = Theme.of(context).primaryTextTheme.titleLarge;
     return Scaffold(
       appBar: AppBar(title: Text(UpdateProfileDestination().title)),
       body: Padding(
@@ -54,15 +55,12 @@ class _UpdateProfileViewState extends State<UpdateProfileView> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Flexible(
+                  Flexible(
                     child: ListTile(
                       contentPadding: EdgeInsets.zero,
                       title: Text(
                         Constants.updateProfileHeaderMessage,
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: textFieldTitleStyle?.copyWith(fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
@@ -75,10 +73,14 @@ class _UpdateProfileViewState extends State<UpdateProfileView> {
                       children: [
                         TextFormField(
                           controller: _nameController,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.account_circle),
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              Icons.account_circle,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                             labelText: "Name",
-                            border: OutlineInputBorder(),
+                            labelStyle: textFieldTitleStyle,
+                            border: const OutlineInputBorder(),
                           ),
                           inputFormatters: <TextInputFormatter>[FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z]+"))],
                           onChanged: (final value) {
@@ -92,10 +94,14 @@ class _UpdateProfileViewState extends State<UpdateProfileView> {
                           controller: _dateController,
                           readOnly: true,
                           mouseCursor: SystemMouseCursors.click,
-                          decoration: const InputDecoration(
-                            prefixIcon: Icon(Icons.calendar_today),
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(
+                              Icons.calendar_today,
+                              color: Theme.of(context).colorScheme.onPrimary,
+                            ),
                             labelText: "Date of Birth",
-                            border: OutlineInputBorder(),
+                            labelStyle: textFieldTitleStyle,
+                            border: const OutlineInputBorder(),
                           ),
                           onTap: () async {
                             final selectedDate = await showDatePicker(

@@ -9,13 +9,22 @@ class DeleteProfileButton extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     return TextButton(
+      style: TextButton.styleFrom(
+        backgroundColor: Theme.of(context).colorScheme.errorContainer,
+      ),
       onPressed: () {
         showDialog<void>(
           context: context,
           builder: (final BuildContext context) {
             return AlertDialog(
-              title: const Text(Constants.deleteProfileDialogTitle),
-              content: const Text(Constants.deleteProfileDialogMessage),
+              title: Text(
+                Constants.deleteProfileDialogTitle,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              content: Text(
+                Constants.deleteProfileDialogMessage,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               actions: [
                 TextButton(
                   onPressed: () {
@@ -35,9 +44,12 @@ class DeleteProfileButton extends StatelessWidget {
           },
         );
       },
-      child: const Text(
-        Constants.deleteProfileButtonTitle,
-        style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Text(
+          Constants.deleteProfileButtonTitle,
+          style: Theme.of(context).primaryTextTheme.labelLarge?.copyWith(color: Theme.of(context).colorScheme.error),
+        ),
       ),
     );
   }
