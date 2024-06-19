@@ -47,6 +47,7 @@ ThemeData defaultLightMode = ThemeData(
     bodyMedium: TextStyle(
       color: Colors.grey[600],
     ), // Secondary text color is a darker grey
+ // Title text color is black
   ),
   iconTheme: IconThemeData(
     color: Colors.grey[800], // Icon color is dark grey for better visibility
@@ -86,6 +87,9 @@ ThemeData defaultDarkMode = ThemeData(
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: Colors.white), // Main text color
     bodyMedium: TextStyle(color: Colors.white70), // Secondary text color (slightly
+    titleMedium: TextStyle(
+      color: Colors.white,
+    ),
     // opaque)
   ),
   iconTheme: const IconThemeData(color: Colors.white70),
@@ -121,6 +125,9 @@ ThemeData brownTheme = ThemeData(
     ),
     bodyMedium: TextStyle(
       color: Color.fromARGB(255, 241, 239, 239),
+    ),
+    titleMedium: TextStyle(
+      color: Colors.white,
     ),
   ),
   iconTheme: const IconThemeData(color: Color.fromARGB(179, 133, 103, 103)),
@@ -162,6 +169,9 @@ ThemeData redTheme = ThemeData(
     ),
     bodyMedium: TextStyle(
       color: Color.fromARGB(255, 233, 227, 227), // Adjusted shade of red
+    ),
+    titleMedium: TextStyle(
+      color: Colors.white,
     ),
   ),
   iconTheme: const IconThemeData(color: Color.fromARGB(179, 133, 0, 0)),
@@ -207,6 +217,9 @@ ThemeData blueTheme = ThemeData(
     bodyMedium: TextStyle(
       color: Color.fromARGB(255, 227, 233, 233), // Adjusted shade of blue
     ),
+    titleMedium: TextStyle(
+      color: Colors.white,
+    ),
   ),
   iconTheme: const IconThemeData(color: Color.fromARGB(179, 0, 0, 133)),
   // Adjusted shade of blue
@@ -247,6 +260,9 @@ ThemeData greenTheme = ThemeData(
     bodyLarge: TextStyle(
       fontSize: 32.0,
       color: Color.fromARGB(255, 204, 211, 204), // Adjusted shade of green
+    ),
+    titleMedium: TextStyle(
+      color: Colors.white,
     ),
     bodyMedium: TextStyle(
       color: Color.fromARGB(255, 227, 233, 227), // Adjusted shade of green

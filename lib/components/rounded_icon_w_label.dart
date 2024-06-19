@@ -10,8 +10,8 @@ class RoundedIconWLabel extends StatelessWidget {
   @override
   Widget build(final BuildContext context) {
     return Container(
-      height: 70,
-      width: 70,
+      height: MediaQuery.of(context).size.height * 0.07,
+      width: MediaQuery.of(context).size.height * 0.07,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(50),

@@ -70,7 +70,7 @@ class _FavouritesViewState extends State<FavouritesView> {
 
   @override
   Widget build(final BuildContext context) {
-    final cardColor = Theme.of(context).cardColor.withOpacity(0.5);
+    final cardColor = Theme.of(context).cardColor.withOpacity(0.9);
     return SingleChildScrollView(
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -116,31 +116,7 @@ class _FavouritesViewState extends State<FavouritesView> {
                                   style: Theme.of(context).textTheme.titleMedium,
                                 ),
                                 children: entry.value.map((final activity) {
-                                  return Column(
-                                    children: [
-                                      roundedContainer(
-                                        child: Container(
-                                          padding: const EdgeInsets.all(12),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                activity.title,
-                                              ),
-                                              Text(
-                                                activity.description,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 2,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        width: MediaQuery.of(context).size.width,
-                                        color: cardColor,
-                                      ),
-                                      const SizedBox(height: 12),
-                                    ],
-                                  );
+                                  return _buildFavCard(activity, context, cardColor);
                                 }).toList(),
                               ),
                             ),
@@ -156,5 +132,33 @@ class _FavouritesViewState extends State<FavouritesView> {
         ),
       ),
     );
+  }
+
+  Column _buildFavCard(FavoriteActivity activity, BuildContext context, Color cardColor) {
+    return Column(
+                                  children: [
+                                    roundedContainer(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(12),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              activity.title,
+                                            ),
+                                            Text(
+                                              activity.description,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      width: MediaQuery.of(context).size.width,
+                                      color: cardColor,
+                                    ),
+                                    const SizedBox(height: 12),
+                                  ],
+                                );
   }
 }
