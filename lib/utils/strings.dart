@@ -16,5 +16,5 @@ extension StringCasingExtension on String {
 
 // Fetches the link to the weather icon
 String fetchWeatherIcon(final String icon) {
-  return "http://openweathermap.org/img/w/$icon.png";
+  return "https://openweathermap.org/img/w/$icon.png";
 }
