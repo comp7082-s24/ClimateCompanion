@@ -1,37 +1,15 @@
 import "dart:async";
 import "dart:convert";
+import "package:climate_companion/components/page_header.dart";
+import "package:climate_companion/components/rounded_container.dart";
+import "package:climate_companion/constants.dart";
+import "package:climate_companion/navigation.dart";
 import "package:climate_companion/screens/ai_suggest_view.dart";
 import "package:flutter/material.dart";
+import "package:flutter_staggered_animations/flutter_staggered_animations.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:go_router/go_router.dart";
-
-class FavoriteActivity {
-  final String title;
-  final String description;
-  final String weatherDescription;
-
-  FavoriteActivity({
-    required this.title,
-    required this.description,
-    required this.weatherDescription,
-  });
-
-  factory FavoriteActivity.fromJson(Map<String, dynamic> json) {
-    return FavoriteActivity(
-      title: json["title"] as String,
-      description: json["description"] as String,
-      weatherDescription: json["weatherDescription"] as String,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "title": title,
-      "description": description,
-      "weatherDescription": weatherDescription,
-    };
-  }
-}
+import "package:climate_companion/models/favourite_activity.dart";
 
 class FavoritesManager {
   static const String _favoritesKey = "favorites";
@@ -39,7 +17,7 @@ class FavoritesManager {
   Future<List<FavoriteActivity>> getFavorites() async {
     final prefs = await SharedPreferences.getInstance();
     final List<String> favoriteActivities = prefs.getStringList(_favoritesKey) ?? [];
-    return favoriteActivities.map((e) => FavoriteActivity.fromJson(jsonDecode(e) as Map<String, dynamic>)).toList();
+    return favoriteActivities.map((final e) => FavoriteActivity.fromJson(jsonDecode(e) as Map<String, dynamic>)).toList();
   }
 }
 
@@ -52,7 +30,7 @@ class FavouritesView extends StatefulWidget {
   final GoRouterState goRouterState;
 
   @override
-  _FavouritesViewState createState() => _FavouritesViewState();
+  State<FavouritesView> createState() => _FavouritesViewState();
 }
 
 class _FavouritesViewState extends State<FavouritesView> {
@@ -77,9 +55,11 @@ class _FavouritesViewState extends State<FavouritesView> {
     });
   }
 
-  Map<String, List<FavoriteActivity>> _groupFavoritesByWeather(List<FavoriteActivity> favorites) {
+  Map<String, List<FavoriteActivity>> _groupFavoritesByWeather(
+    final List<FavoriteActivity> favorites,
+  ) {
     final Map<String, List<FavoriteActivity>> groupedFavorites = {};
-    for (var activity in favorites) {
+    for (final activity in favorites) {
       if (!groupedFavorites.containsKey(activity.weatherDescription)) {
         groupedFavorites[activity.weatherDescription] = [];
       }
@@ -90,50 +70,95 @@ class _FavouritesViewState extends State<FavouritesView> {
 
   @override
   Widget build(final BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Favorites"),
-      ),
-      body: FutureBuilder<List<FavoriteActivity>>(
-        future: _favoritesFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Text("Error: ${snapshot.error}"),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(
-              child: Text("No favorites yet."),
-            );
-          } else {
-            final favorites = snapshot.data!;
-            final groupedFavorites = _groupFavoritesByWeather(favorites);
-            return ListView(
-              children: groupedFavorites.entries.map((entry) {
-                return ExpansionTile(
-                  title: Text(
-                    entry.key.toUpperCase(),
-                    style: TextStyle(fontSize: 24),
-                  ),
-                  children: entry.value.map((activity) {
-                    return ListTile(
-                      title: Text(
-                        activity.title,
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      subtitle: Text(activity.description),
+    final cardColor = Theme.of(context).cardColor.withOpacity(0.9);
+    return SingleChildScrollView(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            PageHeader(title: FavoritesDestination().title),
+            SizedBox(
+              height: MediaQuery.of(context).size.height,
+              child: FutureBuilder<List<FavoriteActivity>>(
+                future: _favoritesFuture,
+                builder: (final context, final snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
                     );
-                  }).toList(),
-                );
-              }).toList(),
-            );
-          }
-        },
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text("Error: ${snapshot.error}"),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(
+                      child: Text(Constants.noFavouritesMessage),
+                    );
+                  } else {
+                    final favorites = snapshot.data!;
+                    final groupedFavorites = _groupFavoritesByWeather(favorites);
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: groupedFavorites.length,
+                      itemBuilder: (final context, final index) {
+                        final entry = groupedFavorites.entries.toList()[index];
+                        return AnimationConfiguration.staggeredList(
+                          position: index,
+                          duration: const Duration(milliseconds: 500),
+                          child: SlideAnimation(
+                            verticalOffset: 100.0,
+                            child: FadeInAnimation(
+                              child: ExpansionTile(
+                                tilePadding: EdgeInsets.zero,
+                                title: Text(
+                                  entry.key.toUpperCase(),
+                                  style: Theme.of(context).textTheme.titleMedium,
+                                ),
+                                children: entry.value.map((final activity) {
+                                  return _buildFavCard(activity, context, cardColor);
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Column _buildFavCard(FavoriteActivity activity, BuildContext context, Color cardColor) {
+    return Column(
+                                  children: [
+                                    roundedContainer(
+                                      child: Container(
+                                        padding: const EdgeInsets.all(12),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              activity.title,
+                                            ),
+                                            Text(
+                                              activity.description,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 2,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      width: MediaQuery.of(context).size.width,
+                                      color: cardColor,
+                                    ),
+                                    const SizedBox(height: 12),
+                                  ],
+                                );
   }
 }

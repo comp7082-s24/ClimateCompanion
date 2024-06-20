@@ -1,42 +1,17 @@
+// ignore: implementation_imports
+import "package:climate_companion/components/rounded_container.dart";
+import "package:climate_companion/constants.dart";
+import "package:climate_companion/navigation.dart";
 import "dart:convert";
-
 import "package:flutter/material.dart";
 import "package:flutter_gemini/flutter_gemini.dart";
+import "package:flutter_staggered_animations/flutter_staggered_animations.dart";
 import "package:go_router/go_router.dart";
 import "package:shared_preferences/shared_preferences.dart";
 import "package:weather/weather.dart";
-import "package:flutter_gemini/src/models/candidates/candidates.dart";
+import "package:climate_companion/models/acitivty_list.dart";
 
-
-final ValueNotifier<DateTime> dateUpdateRequested = ValueNotifier<DateTime>
-  (DateTime.now());
-
-
-
-class ActivityList {
-  final List<Activity> activities;
-
-  ActivityList({required this.activities});
-
-  factory ActivityList.fromJson(final List<dynamic> json) {
-    final List<Activity> activities = json.map((final activity) => Activity.fromJson(activity as Map<String, dynamic>)).toList();
-    return ActivityList(activities: activities);
-  }
-}
-
-class Activity {
-  final String title;
-  final String description;
-
-  Activity({required this.title, required this.description});
-
-  factory Activity.fromJson(final Map<String, dynamic> json) {
-    return Activity(
-      title: json["title"] as String,
-      description: json["description"] as String,
-    );
-  }
-}
+final ValueNotifier<DateTime> dateUpdateRequested = ValueNotifier<DateTime>(DateTime.now());
 
 class AiSuggestView extends StatefulWidget {
   const AiSuggestView({
@@ -54,33 +29,40 @@ class _AiSuggestViewState extends State<AiSuggestView> {
   late Future<Candidates?> fetchCandidatesFuture;
   late final Weather weather;
   ActivityList _activities = ActivityList(activities: []);
-  List<Activity> _selected = [];
+  final List<Activity> _selected = [];
 
   @override
   void initState() {
     super.initState();
     try {
       weather = widget.goRouterState.extra as Weather;
-      final prompt = "Give me a list of 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) when the "
-          "weather is "
-          "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
+      if (weather.areaName == null || weather.country == null || weather.weatherDescription == null) {
+        fetchCandidatesFuture = Future.error("error");
+        return;
+      }
+
+      final prompt = Constants.prompt(weather.areaName!, weather.country!, weather.weatherDescription!);
 
       fetchCandidatesFuture = Gemini.instance.text(prompt);
 
       fetchCandidatesFuture.then((final value) {
-        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
-        final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
-        final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
+        final List<dynamic> activityListJson = parseJsonFromCandidates(value);
 
         setState(() {
           _activities = ActivityList.fromJson(activityListJson);
         });
       });
-    }catch(e){
+    } catch (e) {
       fetchCandidatesFuture = Future.error("error");
       _activities = ActivityList(activities: []);
     }
+  }
 
+  List<dynamic> parseJsonFromCandidates(final Candidates? value) {
+    final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
+    final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
+    final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
+    return activityListJson;
   }
 
   Future<void> saveFavorite(final Activity activity) async {
@@ -101,47 +83,52 @@ class _AiSuggestViewState extends State<AiSuggestView> {
 
   void _reSuggest() {
     setState(() {
-      final prompt = "Give me a list of another 3 of activities to do in ${weather.areaName} located in Country Code (${weather.country}) "
-          "when the "
-          "weather is "
-          "${weather.weatherDescription}. Return the response as a json object containing a title and a description";
+      final prompt = Constants.prompt(weather.areaName!, weather.country!, weather.weatherDescription!, isRePrompt: true);
       fetchCandidatesFuture = Gemini.instance.text(prompt);
-
       fetchCandidatesFuture.then((final value) {
-        final String jsonString = value?.content?.parts?.first.text?.replaceFirst("```json\n{", "{").replaceFirst("}\n```", "}") ?? "";
-        final jsonData = jsonDecode(jsonString) as Map<String, dynamic>;
-        final List<dynamic> activityListJson = jsonData["activities"] as List<dynamic>;
+        final List<dynamic> activityListJson = parseJsonFromCandidates(value);
         _activities = ActivityList.fromJson(activityListJson);
+      }).catchError((final Object e) {
+        fetchCandidatesFuture = Future.error("error");
+        _activities = ActivityList(activities: []);
       });
     });
   }
 
   @override
   Widget build(final BuildContext context) {
-    return FutureBuilder(
-      future: fetchCandidatesFuture,
-      builder: (
-        final BuildContext context,
-        final AsyncSnapshot<Candidates?> snapshot,
-      ) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        } else if (snapshot.hasError) {
-          return Center(
-            child: Text("Error: ${snapshot.error}"),
-          );
-        } else {
-          return _buildAiSuggestView(snapshot.data!);
-        }
-      },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(AiSuggestDestination().title),
+      ),
+      body: FutureBuilder(
+        future: fetchCandidatesFuture,
+        builder: (
+          final BuildContext context,
+          final AsyncSnapshot<Candidates?> snapshot,
+        ) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text("Error: ${snapshot.error}"),
+            );
+          } else {
+            return _buildAiSuggestView(snapshot.data!);
+          }
+        },
+      ),
     );
   }
 
   Widget _buildAiSuggestView(final Candidates c) {
+    if (weather.areaName == null || weather.weatherDescription == null) {
+      return const Text(Constants.aiSuggestErrorMessage);
+    }
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,45 +136,81 @@ class _AiSuggestViewState extends State<AiSuggestView> {
           children: <Widget>[
             c.output != null
                 ? Text(
-                    "Here are some activities you can do in ${weather.areaName} with the weather being ${weather.temperature}:",
+                    // "Here are some activities you can do in ${weather.areaName} with the weather being ${weather.temperature}:"
+                    Constants.aiSuggestHeaderMessage(weather.areaName!, weather.weatherDescription!),
                     style: Theme.of(context).textTheme.titleLarge,
                   )
                 : const SizedBox.shrink(),
             const SizedBox(height: 16),
-            ..._activities.activities.map(
-              (final activity) => ListTile(
-                title: Text(
-                  activity.title,
-                  style: Theme.of(context).textTheme.labelLarge,
+            ListView(
+              shrinkWrap: true,
+              children: AnimationConfiguration.toStaggeredList(
+                duration: const Duration(milliseconds: 375),
+                childAnimationBuilder: (final widget) => SlideAnimation(
+                  horizontalOffset: 50.0,
+                  child: FadeInAnimation(
+                    child: widget,
+                  ),
                 ),
-                subtitle: Text(activity.description),
-                trailing: IconButton(
-                  icon: _selected.contains(activity) ? const Icon(Icons
-                      .favorite_outlined) : const Icon(Icons.favorite_outline),
-                  onPressed: () async {
-                    await saveFavorite(activity);
-                    showDialog<void>(
-                      context: context,
-                      builder: (final BuildContext context) {
-                        return const AlertDialog(
-                          title: Text("Suggestion Saved Successfully."),
-                        );
-                      },
-                    );
-                  },
-                ),
+                children: [
+                  ..._activities.activities.map(
+                    _activitySuggestion,
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 16),
             Text(
-              "Didn't like the suggestions? Try again!",
+              Constants.aiSuggestRetryMessage,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
             Center(
-              child: ElevatedButton(onPressed: _reSuggest, child: const Text("Re-Suggest")),
+              child: ElevatedButton(
+                onPressed: _reSuggest,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                child: Text(Constants.reSuggestButtonTitle, style: Theme.of(context).textTheme.bodyMedium),
+              ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _activitySuggestion(final Activity activity) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: roundedContainer(
+        width: MediaQuery.of(context).size.width,
+        color: Theme.of(context).cardColor.withOpacity(0.5),
+        child: ListTile(
+          title: Text(
+            activity.title,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          subtitle: Text(activity.description, style: Theme.of(context).textTheme.bodyMedium),
+          trailing: IconButton(
+            icon: _selected.contains(activity) ? const Icon(Icons.favorite_outlined) : const Icon(Icons.favorite_outline),
+            onPressed: () async {
+              await saveFavorite(activity);
+              if (mounted) {
+                ScaffoldMessenger.of(context)
+                  ..clearSnackBars()
+                  ..showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        _selected.contains(activity)
+                            ? Constants.suggestionSavedSnackBarMessage
+                            : Constants.suggestionRemovedSnackBarMessage,
+                      ),
+                    ),
+                  );
+              }
+            },
+          ),
         ),
       ),
     );

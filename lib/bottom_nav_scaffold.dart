@@ -1,3 +1,4 @@
+import "package:climate_companion/navigation.dart";
 import "package:flutter/material.dart";
 import "package:go_router/go_router.dart";
 
@@ -31,14 +32,14 @@ class _MainWrapperState extends State<MainWrapper> {
         selectedIndex: widget.navigationShell.currentIndex,
         onDestinationSelected: _goBranch,
         indicatorColor: Colors.blue[300],
-        destinations: const [
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.cloud_outlined),
-            label: "Weather",
+            icon: Icon(WeatherDestination().icon),
+            label: WeatherDestination().title,
           ),
           NavigationDestination(
-            icon: Icon(Icons.favorite_outline),
-            label: "Favourites",
+            icon: Icon(FavoritesDestination().icon),
+            label: FavoritesDestination().title,
           ),
         ],
       ),

@@ -1,8 +1,23 @@
 import "package:flutter/material.dart";
 
-class ThemeColor {
-  ThemeColor._();
-}
+final List<Color> colours = [
+  const Color(0xFF2196F3),
+  const Color(0xFFFFC107),
+  const Color(0xFF4CAF50),
+  const Color(0xFFFF9800),
+  const Color(0xFF9C27B0),
+  const Color(0xFFE91E63),
+  const Color(0xFF00BCD4),
+  const Color(0xFF8BC34A),
+  const Color(0xFF3F51B5),
+  const Color(0xFF795548),
+  const Color(0xFFFF5722),
+  const Color(0xFF673AB7),
+  const Color(0xFF009688),
+  const Color(0xFFCDDC39),
+  const Color(0xFF607D8B),
+  const Color(0xFF9E9E9E),
+];
 
 ThemeData defaultLightMode = ThemeData(
   brightness: Brightness.light,
@@ -27,12 +42,12 @@ ThemeData defaultLightMode = ThemeData(
   // Cards are very light grey, near white
   textTheme: TextTheme(
     bodyLarge: const TextStyle(
-      fontSize: 32.0,
       color: Colors.black,
     ), // Main text color is black for readability
     bodyMedium: TextStyle(
       color: Colors.grey[600],
     ), // Secondary text color is a darker grey
+ // Title text color is black
   ),
   iconTheme: IconThemeData(
     color: Colors.grey[800], // Icon color is dark grey for better visibility
@@ -41,6 +56,7 @@ ThemeData defaultLightMode = ThemeData(
     buttonColor: Colors.blue[300], // Button color is a soft blue
     textTheme: ButtonTextTheme.primary, // Use the primary text theme for buttons
   ),
+  fontFamily: "Roboto",
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: Colors.white,
     selectedItemColor: Colors.blue[300],
@@ -53,7 +69,7 @@ ThemeData defaultLightMode = ThemeData(
 ThemeData defaultDarkMode = ThemeData(
   brightness: Brightness.dark,
   primarySwatch: Colors.blueGrey,
-  primaryColor: Colors.black,
+  primaryColor: Colors.grey[900],
   // Main color is black
   primaryColorLight: Colors.grey[800],
   // Lighter shade of grey instead of blue
@@ -69,11 +85,11 @@ ThemeData defaultDarkMode = ThemeData(
   cardColor: Colors.grey[850],
   // Cards are a slightly lighter shade of black
   textTheme: const TextTheme(
-    bodyLarge: TextStyle(
-      fontSize: 32.0,
-      color: Colors.white,
-    ), // Main text color
+    bodyLarge: TextStyle(color: Colors.white), // Main text color
     bodyMedium: TextStyle(color: Colors.white70), // Secondary text color (slightly
+    titleMedium: TextStyle(
+      color: Colors.white,
+    ),
     // opaque)
   ),
   iconTheme: const IconThemeData(color: Colors.white70),
@@ -84,6 +100,185 @@ ThemeData defaultDarkMode = ThemeData(
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: const Color(0xFF27292E),
     selectedItemColor: Colors.blue[300],
+    unselectedItemColor: Colors.white70,
+    showUnselectedLabels: true,
+    type: BottomNavigationBarType.fixed,
+  ),
+);
+
+ThemeData brownTheme = ThemeData(
+  primarySwatch: Colors.brown,
+  primaryColor: const Color.fromARGB(255, 180, 143, 137),
+  primaryColorLight: Colors.brown[800],
+  primaryColorDark: const Color.fromARGB(255, 134, 103, 103),
+  hintColor: Colors.brown[200],
+  scaffoldBackgroundColor: const Color.fromARGB(255, 68, 48, 48),
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color.fromARGB(255, 139, 102, 102),
+    foregroundColor: Color.fromARGB(255, 160, 139, 139),
+  ),
+  cardColor: const Color.fromARGB(255, 139, 102, 102),
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(
+      fontSize: 32.0,
+      color: Color.fromARGB(255, 233, 230, 230),
+    ),
+    bodyMedium: TextStyle(
+      color: Color.fromARGB(255, 241, 239, 239),
+    ),
+    titleMedium: TextStyle(
+      color: Colors.white,
+    ),
+  ),
+  iconTheme: const IconThemeData(color: Color.fromARGB(179, 133, 103, 103)),
+  buttonTheme: ButtonThemeData(
+    buttonColor: Colors.brown[300],
+    textTheme: ButtonTextTheme.primary,
+  ),
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    backgroundColor: const Color.fromARGB(255, 139, 102, 102),
+    selectedItemColor: Colors.brown[300],
+    unselectedItemColor: Colors.white70,
+    showUnselectedLabels: true,
+    type: BottomNavigationBarType.fixed,
+  ),
+);
+
+ThemeData redTheme = ThemeData(
+  primarySwatch: Colors.red,
+  primaryColor: const Color.fromARGB(255, 180, 0, 0),
+  // Adjusted shade of red
+  primaryColorLight: Colors.red[800],
+  // Adjusted shade of red
+  primaryColorDark: const Color.fromARGB(255, 134, 0, 0),
+  // Adjusted shade of red
+  hintColor: Colors.red[200],
+  // Adjusted shade of red
+  scaffoldBackgroundColor: const Color.fromARGB(255, 163, 21, 21),
+  // Adjusted shade of red
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color.fromARGB(255, 231, 85, 85), // Adjusted shade of red
+    foregroundColor: Color.fromARGB(255, 160, 0, 0), // Adjusted shade of red
+  ),
+  cardColor: const Color.fromARGB(255, 124, 10, 10),
+  // Adjusted shade of red
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(
+      fontSize: 32.0,
+      color: Color.fromARGB(255, 211, 204, 204), // Adjusted shade of red
+    ),
+    bodyMedium: TextStyle(
+      color: Color.fromARGB(255, 233, 227, 227), // Adjusted shade of red
+    ),
+    titleMedium: TextStyle(
+      color: Colors.white,
+    ),
+  ),
+  iconTheme: const IconThemeData(color: Color.fromARGB(179, 133, 0, 0)),
+  // Adjusted shade of red
+  buttonTheme: ButtonThemeData(
+    buttonColor: Colors.red[300], // Adjusted shade of red
+    textTheme: ButtonTextTheme.primary,
+  ),
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    backgroundColor: const Color.fromARGB(255, 231, 85, 85),
+    // Adjusted shade of red
+    selectedItemColor: Colors.red[300],
+    // Adjusted shade of red
+    unselectedItemColor: Colors.white70,
+    showUnselectedLabels: true,
+    type: BottomNavigationBarType.fixed,
+  ),
+);
+
+ThemeData blueTheme = ThemeData(
+  primarySwatch: Colors.blue,
+  primaryColor: const Color.fromARGB(255, 0, 0, 180),
+  // Adjusted shade of blue
+  primaryColorLight: Colors.blue[800],
+  // Adjusted shade of blue
+  primaryColorDark: const Color.fromARGB(255, 0, 0, 134),
+  // Adjusted shade of blue
+  hintColor: Colors.blue[200],
+  // Adjusted shade of blue
+  scaffoldBackgroundColor: const Color.fromARGB(255, 118, 118, 222),
+  // Adjusted shade of blue
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color.fromARGB(255, 85, 85, 231), // Adjusted shade of blue
+    foregroundColor: Color.fromARGB(255, 0, 0, 160), // Adjusted shade of blue
+  ),
+  cardColor: const Color.fromARGB(255, 10, 10, 124),
+  // Adjusted shade of blue
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(
+      fontSize: 32.0,
+      color: Color.fromARGB(255, 204, 211, 211), // Adjusted shade of blue
+    ),
+    bodyMedium: TextStyle(
+      color: Color.fromARGB(255, 227, 233, 233), // Adjusted shade of blue
+    ),
+    titleMedium: TextStyle(
+      color: Colors.white,
+    ),
+  ),
+  iconTheme: const IconThemeData(color: Color.fromARGB(179, 0, 0, 133)),
+  // Adjusted shade of blue
+  buttonTheme: ButtonThemeData(
+    buttonColor: Colors.blue[300], // Adjusted shade of blue
+    textTheme: ButtonTextTheme.primary,
+  ),
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    backgroundColor: const Color.fromARGB(255, 85, 85, 231),
+    // Adjusted shade of blue
+    selectedItemColor: Colors.blue[300],
+    // Adjusted shade of blue
+    unselectedItemColor: Colors.white70,
+    showUnselectedLabels: true,
+    type: BottomNavigationBarType.fixed,
+  ),
+);
+
+ThemeData greenTheme = ThemeData(
+  primarySwatch: Colors.green,
+  primaryColor: const Color.fromARGB(255, 0, 180, 0),
+  // Adjusted shade of green
+  primaryColorLight: Colors.green[800],
+  // Adjusted shade of green
+  primaryColorDark: const Color.fromARGB(255, 35, 108, 35),
+  // Adjusted shade of green
+  hintColor: Colors.green[200],
+  // Adjusted shade of green
+  scaffoldBackgroundColor: const Color.fromARGB(255, 143, 205, 143),
+  // Adjusted shade of green
+  appBarTheme: const AppBarTheme(
+    backgroundColor: Color.fromARGB(255, 85, 231, 85), // Adjusted shade of green
+    foregroundColor: Color.fromARGB(255, 0, 160, 0), // Adjusted shade of green
+  ),
+  cardColor: const Color.fromARGB(255, 10, 124, 10),
+  // Adjusted shade of green
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(
+      fontSize: 32.0,
+      color: Color.fromARGB(255, 204, 211, 204), // Adjusted shade of green
+    ),
+    titleMedium: TextStyle(
+      color: Colors.white,
+    ),
+    bodyMedium: TextStyle(
+      color: Color.fromARGB(255, 227, 233, 227), // Adjusted shade of green
+    ),
+  ),
+  iconTheme: const IconThemeData(color: Color.fromARGB(179, 0, 133, 0)),
+  // Adjusted shade of green
+  buttonTheme: ButtonThemeData(
+    buttonColor: Colors.green[300], // Adjusted shade of green
+    textTheme: ButtonTextTheme.primary,
+  ),
+  bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    backgroundColor: const Color.fromARGB(255, 85, 231, 85),
+    // Adjusted shade of green
+    selectedItemColor: Colors.green[300],
+    // Adjusted shade of green
     unselectedItemColor: Colors.white70,
     showUnselectedLabels: true,
     type: BottomNavigationBarType.fixed,
